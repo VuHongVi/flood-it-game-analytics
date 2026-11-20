@@ -47,3 +47,7 @@ timestamp_utc,query_name,sql_hash,action,bytes_processed,bytes_billed,ref_cost_u
 2026-11-20T20:33:07Z,30_retention_cohort,19c0338b8eb31394,cache_hit,0,0,0.0,85,,
 2026-11-20T20:33:17Z,40_revenue_summary,a3f0b23db0bdc717,dry_run,1172569696,0,0,,,
 2026-11-20T20:33:24Z,40_revenue_summary,a3f0b23db0bdc717,run,1172569696,1173356544,0.00667,3,f51d0214-83a4-43ef-b5e2-005ebfc4dff6,
+2026-11-20T20:38:57Z,50_level_stats,9eeb88ff6e45da2c,dry_run,904804378,0,0,,,
+2026-11-20T20:39:04Z,50_level_stats,9eeb88ff6e45da2c,run,904804378,904921088,0.005144,33,e6f5d305-b429-441e-8d3c-288020d1cccb,
+2026-11-20T20:39:07Z,51_user_level,90bf5bf094f82911,dry_run,1142201168,0,0,,,
+2026-11-20T20:39:18Z,51_user_level,90bf5bf094f82911,run,1142201168,1142947840,0.006497,46376,c965a071-b0df-4c1f-81f6-f41f1741ace2,

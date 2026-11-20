@@ -1,0 +1,40 @@
+|--- d0_engagement_min <= 1.78
+|   |--- is_google_play <= 0.50
+|   |   |--- d0_level_completes <= 0.50
+|   |   |   |--- d0_events <= 12.50
+|   |   |   |   |--- class: 1
+|   |   |   |--- d0_events >  12.50
+|   |   |   |   |--- class: 1
+|   |   |--- d0_level_completes >  0.50
+|   |   |   |--- d0_events <= 42.50
+|   |   |   |   |--- class: 1
+|   |   |   |--- d0_events >  42.50
+|   |   |   |   |--- class: 1
+|   |--- is_google_play >  0.50
+|   |   |--- d0_engagement_min <= 0.06
+|   |   |   |--- class: 1
+|   |   |--- d0_engagement_min >  0.06
+|   |   |   |--- is_us <= 0.50
+|   |   |   |   |--- class: 1
+|   |   |   |--- is_us >  0.50
+|   |   |   |   |--- class: 0
+|--- d0_engagement_min >  1.78
+|   |--- d0_sessions <= 1.50
+|   |   |--- d0_events <= 297.50
+|   |   |   |--- d0_level_starts <= 14.50
+|   |   |   |   |--- class: 0
+|   |   |   |--- d0_level_starts >  14.50
+|   |   |   |   |--- class: 1
+|   |   |--- d0_events >  297.50
+|   |   |   |--- class: 0
+|   |--- d0_sessions >  1.50
+|   |   |--- d0_engagement_min <= 9.52
+|   |   |   |--- d0_level_starts <= 5.50
+|   |   |   |   |--- class: 1
+|   |   |   |--- d0_level_starts >  5.50
+|   |   |   |   |--- class: 0
+|   |   |--- d0_engagement_min >  9.52
+|   |   |   |--- d0_level_starts <= 30.50
+|   |   |   |   |--- class: 0
+|   |   |   |--- d0_level_starts >  30.50
+|   |   |   |   |--- class: 0

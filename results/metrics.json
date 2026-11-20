@@ -177,5 +177,136 @@
     "ltv_d30_usd_own_population": 0.002701,
     "ltv_d30_own_population_users": 2955,
     "cohort_purchases_in_window": 17
+  },
+  "levels": {
+    "n_levels": 30,
+    "players_started_level1": 3509,
+    "players_completed_level30": 189,
+    "reach_rate_level10": 0.2784,
+    "reach_rate_level20": 0.2023,
+    "reach_rate_level30": 0.0784,
+    "hardest_levels": [
+      27,
+      29,
+      9
+    ],
+    "hardest_levels_completion": [
+      0.0447,
+      0.0698,
+      0.2397
+    ],
+    "level27_attempts": 6629,
+    "level27_completes": 296,
+    "level27_attempts_per_player": 9.07,
+    "easiest_band": "11-16",
+    "easiest_band_completion_min": 0.7131,
+    "top_quit_levels": [
+      27,
+      29,
+      9
+    ],
+    "top_quit_rates": [
+      0.4574,
+      0.3241,
+      0.1969
+    ],
+    "level1_quit_rate_new": 0.0739,
+    "anomaly_complete_without_level": 1272,
+    "anomaly_level0_fails": 143,
+    "anomaly_level31_retries": 185,
+    "quickplay_completion": {
+      "L": 0.2324,
+      "M": 0.375,
+      "S": 0.3776
+    },
+    "quickplay_share_of_starts": 0.8755,
+    "players_mode_quickplay_only": 7327,
+    "players_mode_progression_only": 1950,
+    "players_mode_both": 2861
+  },
+  "segments": {
+    "d7_retention_eng_lt1min": 0.0226,
+    "d7_retention_eng_15plus": 0.12,
+    "d1_retention_eng_lt1min": 0.1223,
+    "d1_retention_eng_15plus": 0.4353,
+    "share_eng_lt1min": 0.2949,
+    "d1_retention_by_mode": {
+      "both": 0.2909,
+      "no level played": 0.1225,
+      "progression only": 0.2552,
+      "quickplay only": 0.1775
+    },
+    "payer_median_active_days": 3.0,
+    "nonpayer_median_active_days": 1.0,
+    "payer_median_engagement_min": 23.8,
+    "nonpayer_median_engagement_min": 3.9,
+    "payer_vs_nonpayer_active_days_mannwhitney_p": 0.00469
+  },
+  "churn": {
+    "definition": "churned = no activity on day 7..30 after install; features = install-day behaviour only",
+    "population": 2955,
+    "churn_rate": 0.7212,
+    "lr_cv_auc_mean": 0.6212,
+    "lr_cv_auc_std": 0.039,
+    "lr_test_auc": 0.6826,
+    "tree_cv_auc_mean": 0.6095,
+    "tree_cv_auc_std": 0.0363,
+    "tree_test_auc": 0.6023,
+    "lr_top_features": [
+      "d0_engagement_min",
+      "d0_post_scores",
+      "d0_max_level",
+      "is_google_play",
+      "d0_events"
+    ],
+    "lr_top_features_coef": [
+      -0.288,
+      -0.219,
+      0.22,
+      -0.147,
+      0.162
+    ],
+    "tree_top_features": [
+      "d0_engagement_min",
+      "is_google_play",
+      "is_us",
+      "d0_level_fails",
+      "d0_quickplay_starts"
+    ],
+    "top_decile_churn_rate": 0.8649,
+    "bottom_decile_churn_rate": 0.5135,
+    "test_n": 739,
+    "train_n": 2216
+  },
+  "stats": {
+    "d1_ios": 0.1895,
+    "d1_android": 0.2269,
+    "d1_platform_diff": -0.0375,
+    "d1_platform_ci": [
+      -0.0632,
+      -0.0117
+    ],
+    "d1_platform_p": 0.00532,
+    "d1_platform_cohens_h": -0.092,
+    "d7_platform_diff": -0.0079,
+    "d7_platform_p": 0.305,
+    "d1_gp": 0.2649,
+    "d1_direct_android": 0.1967,
+    "d1_source_diff": 0.0682,
+    "d1_source_ci": [
+      0.0369,
+      0.0995
+    ],
+    "d1_source_p": 1.91e-05,
+    "d1_source_cohens_h": 0.162,
+    "d7_source_diff": 0.0529,
+    "d7_source_p": 6.94e-09,
+    "n_gp_android": 1325,
+    "n_direct_android": 1459,
+    "ab_baseline_d1": 0.2147,
+    "ab_mde_abs": 0.02,
+    "ab_n_per_arm": 6834,
+    "ab_sample_installs_per_day": 40.3,
+    "ab_days_needed_at_sample_volume": 340
   }
 }

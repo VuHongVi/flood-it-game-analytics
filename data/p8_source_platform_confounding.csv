@@ -1,0 +1,9 @@
+platform,traffic_source,cohort_players
+ANDROID,(direct),1499
+ANDROID,(null),35
+ANDROID,Google,1
+ANDROID,firebase,2
+ANDROID,google,16
+ANDROID,google-play,1346
+ANDROID,invite_a_friend,14
+IOS,(direct),1394

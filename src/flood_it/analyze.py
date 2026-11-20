@@ -31,11 +31,9 @@ def run_all(ctx: dict) -> dict:
                                                  metrics["growth"]["spike_dates"])
     metrics["revenue"] = sections_b.revenue(raw, cohort, a["ltv_days"], end)
     # later sections (levels, segments, churn, stats) are registered in stage C
-    try:
-        from .analysis import sections_c
-        metrics.update(sections_c.run_all(ctx, cohort, start, end))
-    except ImportError:
-        log.info("sections_c not available yet")
+    from .analysis import sections_c
+    ctx["metrics_b_retention_d1"] = metrics["retention"]["d1_retention"]
+    metrics.update(sections_c.run_all(ctx, cohort, start, end))
     if "validation" in ctx:
         metrics["validation"] = ctx["validation"]["summary"]
     p = write_metrics(metrics)
