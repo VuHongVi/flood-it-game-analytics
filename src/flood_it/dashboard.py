@@ -282,11 +282,12 @@ window.fiSvg = (el, height, m) => {
   const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${w} ${height}`).attr('height', height).attr('role', 'img');
   return {svg, w, h: height, iw: w - m.l - m.r, ih: height - m.t - m.b, g: svg.append('g').attr('transform', `translate(${m.l},${m.t})`)};
 };
-window.fiAxes = (c, x, y, {xTicks, yFmt, xFmt, yTicks = 5}) => {
-  c.g.append('g').attr('class', 'grid').call(d3.axisLeft(y).ticks(yTicks).tickSize(-c.iw).tickFormat(''));
-  const xa = d3.axisBottom(x); if (xTicks) xa.ticks(xTicks); if (xFmt) xa.tickFormat(xFmt);
+window.fiAxes = (c, x, y, {xTicks, yFmt, xFmt, yTicks = 5, xValues, yValues}) => {
+  const ya = () => { const a = d3.axisLeft(y).ticks(yTicks); if (yValues) a.tickValues(yValues); return a; };
+  c.g.append('g').attr('class', 'grid').call(ya().tickSize(-c.iw).tickFormat(''));
+  const xa = d3.axisBottom(x); if (xTicks) xa.ticks(xTicks); if (xValues) xa.tickValues(xValues); if (xFmt) xa.tickFormat(xFmt);
   c.g.append('g').attr('class', 'axis').attr('transform', `translate(0,${c.ih})`).call(xa);
-  c.g.append('g').attr('class', 'axis').call(d3.axisLeft(y).ticks(yTicks).tickFormat(yFmt));
+  c.g.append('g').attr('class', 'axis').call(ya().tickFormat(yFmt));
 };
 
 // ---- Growth
@@ -543,10 +544,13 @@ dash.draw('chart-power', (el) => {
   c.svg.attr('aria-label', 'Players per arm needed by minimum detectable effect');
   const x = d3.scaleLinear().domain(d3.extent(rows, (r) => +r.mde_abs)).range([0, c.iw]);
   const y = d3.scaleLog().domain([d3.min(rows, (r) => +r.n_per_arm) * 0.7, d3.max(rows, (r) => +r.n_per_arm) * 1.4]).range([c.ih, 0]);
-  fiAxes(c, x, y, {yFmt: d3.format('~s'), xFmt: (v) => '+' + d3.format('.0f')(v * 100) + ' pp', xTicks: rows.length, yTicks: 4});
+  fiAxes(c, x, y, {yFmt: d3.format('~s'), xFmt: (v) => '+' + d3.format('.0f')(v * 100) + ' pp', xValues: rows.map((r) => +r.mde_abs), yValues: [1000, 3000, 10000, 30000].filter((v) => v >= y.domain()[0] && v <= y.domain()[1])});
   c.g.append('path').datum(rows).attr('fill', 'none').style('stroke', C[0]).attr('stroke-width', 2).attr('d', d3.line().x((r) => x(+r.mde_abs)).y((r) => y(+r.n_per_arm)));
   c.g.selectAll('.pt').data(rows).join('circle').attr('r', 4.5).attr('cx', (r) => x(+r.mde_abs)).attr('cy', (r) => y(+r.n_per_arm)).style('fill', C[0]).style('stroke', 'var(--color-panel)').attr('stroke-width', 2);
-  c.g.selectAll('.pl').data(rows).join('text').attr('class', 'lbl').attr('x', (r) => x(+r.mde_abs)).attr('y', (r) => y(+r.n_per_arm) - 10).attr('text-anchor', (r, i) => (i === rows.length - 1 ? 'end' : 'start')).text((r) => `${fiFmt(r.n_per_arm, 'num0')} / arm`);
+  const last = rows.length - 1;
+  c.g.selectAll('.pl').data(rows).join('text').attr('class', 'lbl')
+    .attr('x', (r, i) => x(+r.mde_abs) + (i === last ? -10 : 10)).attr('y', (r, i) => y(+r.n_per_arm) + (i === last ? -10 : 4))
+    .attr('text-anchor', (r, i) => (i === last ? 'end' : 'start')).text((r) => d3.format('.3~s')(+r.n_per_arm));
   const tip = fiTip(el);
   c.g.selectAll('.pt').on('mousemove', (ev, r) => tip.show(ev, [[`MDE ${fiFmt(r.mde_abs, 'pp1')}`], ['Players per arm', fiFmt(r.n_per_arm, 'num0')], ['Days at sample volume', fiFmt(r.days_needed_at_sample_volume, 'num0')]])).on('mouseleave', () => tip.hide());
 });
