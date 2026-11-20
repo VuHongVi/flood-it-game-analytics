@@ -80,8 +80,8 @@ def recommendations(m: dict) -> list[str]:
         "**Product - fix the first minute.** Shorten time-to-first-win (tutorial board, easier first levels) and "
         "measure the share of installs reaching 1+ minute of play on day 0 as a leading indicator of D7.",
         f"**Product - surface progression mode.** Players who tried progression on day 0 retain better on D1 "
-        f"({pct(s['d1_retention_by_mode']['progression only'])}) than quickplay-only players "
-        f"({pct(s['d1_retention_by_mode']['quickplay only'])}); test a progression-first home screen.",
+        f"({pct(s['d1_retention_by_mode']['progression_only'])}) than quickplay-only players "
+        f"({pct(s['d1_retention_by_mode']['quickplay_only'])}); test a progression-first home screen.",
         "**LiveOps / CRM - target at-risk installs.** Score every install after day 0 with the churn model and send "
         "re-engagement pushes to the top risk deciles; measure with a holdout group.",
         "**Marketing - check channel and platform quality.** Compare D1/D7 and payer rate per channel with a "
@@ -264,6 +264,86 @@ better first minute, each validated by an A/B test.
 """
 
 
+def render_cv(m: dict, links: dict) -> str:
+    p, r, lv, c, st, val, s = (m[k] for k in ["profile", "retention", "levels", "churn", "stats", "validation", "segments"])
+    repo = links.get("repo_url") or ""
+    return f"""# CV - Selected Projects
+
+**Flood-It Mobile Game Analytics (Firebase/GA4, BigQuery, Python, Power BI)** - {repo}
+
+- Built an automated BigQuery + Python pipeline on {num(p['total_events'])} Firebase events / {num(p['total_users'])} players
+  (cost-guarded dry-runs, cached and reproducible in CI) covering DAU/stickiness, cohort retention with right-censoring
+  (D1 {pct(r['d1_retention'])}, D30 {pct(r['d30_retention'])}), ARPU/ARPPU/LTV and level funnels; cross-validated every
+  headline metric in SQL vs Pandas ({val['passed']}/{val['checks']} checks pass).
+- Found that level {lv['hardest_levels'][0]} stops {pct(lv['top_quit_rates'][0])} of new players who reach it
+  ({pct(lv['hardest_levels_completion'][0])} completion per attempt) and that installs playing under 1 minute on day 0 keep
+  {pct(s['d7_retention_eng_lt1min'])} on D7 vs {pct(s['d7_retention_eng_15plus'])} for 15+ minutes; built a churn model on
+  install-day behaviour (logistic regression, test AUC {c['lr_test_auc']:.2f}) and an A/B test plan with power analysis
+  ({num(st['ab_n_per_arm'])} players per arm for +2 pp D1).
+- Diagnosed data-quality traps with SQL (sampled export, DAU spikes caused by missing screen_view events, mixed-type
+  params, missing first_open) and delivered an interactive dashboard plus a Power BI model with DAX measures reconciled
+  to the pipeline.
+"""
+
+
+def render_interview(m: dict) -> str:
+    p, g, r, v, lv, s, c, st, val = (m[k] for k in ["profile", "growth", "retention", "revenue", "levels",
+                                                    "segments", "churn", "stats", "validation"])
+    qa = [
+        ("Tóm tắt dự án trong 1 phút?",
+         f"Phân tích dữ liệu Firebase của game Flood-It trên BigQuery: {num(p['total_users'])} người chơi, {p['n_days']} ngày. "
+         f"Pipeline tự động (SQL có tham số, dry-run chặn chi phí, cache) → tăng trưởng, retention cohort, doanh thu, level, "
+         f"phân khúc, churn model, A/B. Kết luận chính: người chơi rời đi rất nhanh (D1 {pct(r['d1_retention'])}), quyết định "
+         f"nằm ở phiên đầu và ở level {lv['hardest_levels'][0]}; IAP gần như không có nên đòn bẩy là retention + quảng cáo."),
+        ("Retention D7 bạn tính thế nào? Vì sao phải xử lý right-censoring?",
+         f"Classic Day-N: số người hoạt động đúng ngày cài + 7 chia số người ĐỦ ĐIỀU KIỆN (ngày cài + 7 ≤ ngày cuối dữ liệu). "
+         f"Nếu chia cho tất cả người cài, cohort cuối tháng 9 chưa có ngày thứ 7 sẽ bị tính là rời bỏ → retention bị kéo thấp sai. "
+         f"Kết quả D7 = {pct(r['d7_retention'])} trên {num(r['d7_eligible'])} người eligible, có khoảng tin cậy Wilson."),
+        ("Bạn phát hiện vấn đề dữ liệu nào? Làm sao biết?",
+         f"Không tin, phải query: (1) đúng {num(p['events_per_day_min'])} event mỗi ngày → dữ liệu bị lấy mẫu; "
+         f"(2) {pct(p['share_acquired_before_window'], 0)} người chơi cài trước khoảng dữ liệu → cohort chỉ dùng người cài trong khoảng; "
+         f"(3) {pct(p['share_new_missing_first_open'], 0)} người mới thiếu first_open; (4) level lưu lẫn int/double; "
+         f"(5) event_value_in_usd NULL ở {v['iap_missing_event_value_in_usd']} giao dịch; (6) traffic source google-play chỉ có ở Android."),
+        ("DAU có ngày tăng gấp đôi rưỡi, bạn giải thích sao?",
+         f"{g['n_spike_days']} ngày DAU ~{num(g['spike_avg_dau'])} nhưng install ~{num(g['spike_avg_installs'], 1)}, nên không phải người mới. "
+         f"So mix event: screen_view chỉ còn {pct(g['spike_screen_view_ratio'])} so với ngày thường. Vì mẫu cố định 50.000 event/ngày, "
+         f"thiếu screen_view thì ngân sách event chia cho nhiều người hơn ({num(g['spike_events_per_dau'])} vs {num(g['normal_events_per_dau'])} event/người) "
+         f"→ DAU bị thổi phồng. Đây là artifact; tôi đánh dấu và kiểm tra độ nhạy (D1 gần như không đổi)."),
+        ("ARPU, ARPDAU, ARPPU, LTV khác nhau thế nào? Số của game này?",
+         f"ARPU = doanh thu / người hoạt động ({usd(v['arpu_usd'], 4)}); ARPDAU = doanh thu / tổng DAU ({usd(v['arpdau_usd'], 5)}); "
+         f"ARPPU = doanh thu / người trả phí ({usd(v['arppu_usd'])}); LTV D30 = doanh thu cộng dồn 30 ngày / install, cùng một quần thể "
+         f"({usd(v['ltv_d30_usd'], 4)}). Payer rate {pct(v['payer_rate'], 2)}, chỉ {v['purchases']} giao dịch → số rất nhiễu, chỉ mang tính định hướng; "
+         f"doanh thu quảng cáo không có trong export."),
+        ("Mô hình churn: định nghĩa, tránh leakage, kết quả?",
+         f"Churn = không hoạt động ngày 7–30 sau cài, chỉ trên {num(c['population'])} người đủ 30 ngày quan sát. Feature chỉ lấy hành vi NGÀY CÀI "
+         f"→ không dùng thông tin tương lai. Logistic regression (log + chuẩn hoá, class_weight balanced) và cây quyết định depth 4; "
+         f"train/test 75/25 phân tầng + 5-fold CV. AUC test {c['lr_test_auc']:.2f} (CV {c['lr_cv_auc_mean']:.2f}). Biến mạnh nhất: thời gian chơi ngày đầu. "
+         f"Nhóm 10% rủi ro cao churn {pct(c['top_decile_churn_rate'])} vs {pct(c['bottom_decile_churn_rate'])}: đủ để xếp hạng, chưa đủ nhắm cá nhân."),
+        ("AUC 0.68 có tốt không? Làm sao cải thiện?",
+         "Mức trung bình — chỉ có 1 ngày hành vi và dữ liệu bị lấy mẫu. Cải thiện: thêm D1–D3 (dự đoán muộn hơn nhưng chính xác hơn), "
+         "feature theo phiên (thời gian giữa các phiên, tốc độ qua level, số lần fail liên tiếp), thiết bị/OS, gradient boosting; "
+         "đánh giá thêm precision@top-decile vì đội CRM chỉ nhắm một nhóm nhỏ."),
+        ("iOS vs Android khác biệt có ý nghĩa không? Có phải nhân quả?",
+         f"D1 iOS thấp hơn {pp(-st['d1_platform_diff'])} (CI {pp(st['d1_platform_ci'][0])} đến {pp(st['d1_platform_ci'][1])}, p = {pval(st['d1_platform_p'])}), "
+         f"nhưng Cohen's h {st['d1_platform_cohens_h']:.2f} là rất nhỏ; D7 không khác (p = {pval(st['d7_platform_p'])}). Đây là so sánh quan sát: hai nhóm khác "
+         f"về quốc gia, thiết bị, kênh — không phải nhân quả. Với traffic source tôi chỉ so trong Android vì iOS chỉ có (direct)."),
+        ("Thiết kế A/B test cho thay đổi độ khó level 27?",
+         f"Giả thuyết: giảm độ khó level {lv['hardest_levels'][0]} tăng tỷ lệ qua level và retention. Random theo user, 50/50. Metric chính: "
+         f"tỷ lệ qua level; metric cấp game: D7; guardrail: lượt xem quảng cáo thưởng, mua extra steps, crash. Cỡ mẫu: baseline D1 {pct(st['ab_baseline_d1'])}, "
+         f"MDE +2 pp, α 0,05, power 0,8 → {num(st['ab_n_per_arm'])}/nhánh; với lượng install trong mẫu ({num(st['ab_sample_installs_per_day'], 1)}/ngày) mất "
+         f"~{num(st['ab_days_needed_at_sample_volume'])} ngày → cần chạy trên toàn bộ traffic hoặc chọn MDE lớn hơn; chạy đủ chu kỳ tuần, không peek."),
+        ("Bạn dùng AI thế nào và kiểm chứng ra sao?",
+         f"AI viết nháp SQL/Python, tôi coi là bản nháp phải kiểm chứng: mỗi chỉ số tính 2 cách (SQL trên event thô và Pandas trên bảng player-level), "
+         f"so khớp tự động {val['passed']}/{val['checks']} PASS, thêm kiểm tra bất biến và unit test. Các lỗi AI đã bắt được được ghi trong "
+         f"docs/ai_corrections.md, ví dụ alias trong ROLLUP làm dòng tổng NULL, đường LTV đi xuống do đổi quần thể, tỷ lệ người mới bị left-censoring."),
+    ]
+    out = ["# 10 câu hỏi phỏng vấn về dự án (kèm gợi ý trả lời)", "",
+           "*Số liệu sinh tự động từ results/metrics.json.*", ""]
+    for i, (q, a) in enumerate(qa, 1):
+        out += [f"## {i}. {q}", "", a, ""]
+    return "\n".join(out)
+
+
 def run_all(ctx: dict) -> None:
     m = read_metrics()
     links = ctx["cfg"].raw.get("links", {}) or {}
@@ -271,3 +351,5 @@ def run_all(ctx: dict) -> None:
     rp = ctx["cfg"].path("reports_dir") / "report.md"
     rp.write_text(render_report(m), encoding="utf-8", newline="\n")
     log.info("README.md and %s written", rp.name)
+    (ctx["cfg"].path("reports_dir") / "cv_bullets.md").write_text(render_cv(m, links), encoding="utf-8", newline="\n")
+    (ctx["cfg"].path("reports_dir") / "interview_questions.md").write_text(render_interview(m), encoding="utf-8", newline="\n")

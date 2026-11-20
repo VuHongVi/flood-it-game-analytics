@@ -27,7 +27,7 @@ analysis:
   spike_window: ["20180616", "20180703"]
 
 links:
-  repo_url: null        # set after the GitHub repo is created (stage E)
+  repo_url: https://github.com/VuHongVi/flood-it-game-analytics
   dashboard_url: null   # set after the Claude artifact is published (stage E)
 
 paths:

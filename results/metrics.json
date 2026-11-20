@@ -232,9 +232,9 @@
     "share_eng_lt1min": 0.2949,
     "d1_retention_by_mode": {
       "both": 0.2909,
-      "no level played": 0.1225,
-      "progression only": 0.2552,
-      "quickplay only": 0.1775
+      "no_level_played": 0.1225,
+      "progression_only": 0.2552,
+      "quickplay_only": 0.1775
     },
     "payer_median_active_days": 3.0,
     "nonpayer_median_active_days": 1.0,

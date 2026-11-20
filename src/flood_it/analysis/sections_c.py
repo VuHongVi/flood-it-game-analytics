@@ -168,9 +168,12 @@ def _seg_rows(df: pd.DataFrame, dim: str, col: str) -> list[dict]:
     for seg, d in df.groupby(col, observed=True):
         d1, d7, ch = d[d.elig_d1 == 1], d[d.elig_d7 == 1], d[d.elig_churn == 1]
         rows.append({"dimension": dim, "segment": str(seg), "players": len(d),
-                     "d1_eligible": len(d1), "d1_retention": d1["active_d1"].mean() if len(d1) else np.nan,
-                     "d7_eligible": len(d7), "d7_retention": d7["active_d7"].mean() if len(d7) else np.nan,
-                     "churn_eligible": len(ch), "churn_rate": ch["churned"].mean() if len(ch) else np.nan})
+                     "d1_eligible": len(d1), "d1_retained": int(d1["active_d1"].sum()),
+                     "d1_retention": d1["active_d1"].mean() if len(d1) else np.nan,
+                     "d7_eligible": len(d7), "d7_retained": int(d7["active_d7"].sum()),
+                     "d7_retention": d7["active_d7"].mean() if len(d7) else np.nan,
+                     "churn_eligible": len(ch), "churned": int(ch["churned"].sum()),
+                     "churn_rate": ch["churned"].mean() if len(ch) else np.nan})
     return rows
 
 
@@ -190,6 +193,7 @@ def segments(raw: dict, feat: pd.DataFrame) -> dict:
                      ("Platform", "seg_platform")]:
         rows += _seg_rows(f, dim, col)
     seg = pd.DataFrame(rows)
+    seg.insert(2, "segment_order", seg.groupby("dimension").cumcount() + 1)
     save_csv(seg, "p6_day0_segments")
 
     # payer vs non-payer (all players, lifetime-in-window behaviour; only a few dozen payers)
@@ -219,7 +223,7 @@ def segments(raw: dict, feat: pd.DataFrame) -> dict:
         "d1_retention_eng_lt1min": _r(eng.loc["<1 min", "d1_retention"]),
         "d1_retention_eng_15plus": _r(eng.loc["15+ min", "d1_retention"]),
         "share_eng_lt1min": _r(eng.loc["<1 min", "players"] / eng["players"].sum()),
-        "d1_retention_by_mode": {k: _r(v) for k, v in s.loc["Day-0 game mode", "d1_retention"].items()},
+        "d1_retention_by_mode": {k.replace(" ", "_"): _r(v) for k, v in s.loc["Day-0 game mode", "d1_retention"].items()},
         "payer_median_active_days": _r(pvi.loc["payer", "median_active_days"], 1),
         "nonpayer_median_active_days": _r(pvi.loc["non-payer", "median_active_days"], 1),
         "payer_median_engagement_min": _r(pvi.loc["payer", "median_engagement_min"], 1),
@@ -280,7 +284,7 @@ def churn_model(feat: pd.DataFrame, seed: int) -> dict:
     p = fitted["logistic_regression"][1]
     dec = pd.DataFrame({"p": p, "y": y_te.values})
     dec["risk_decile"] = pd.qcut(dec["p"].rank(method="first"), 10, labels=range(1, 11)).astype(int)
-    lift = dec.groupby("risk_decile").agg(players=("y", "size"), churn_rate=("y", "mean"),
+    lift = dec.groupby("risk_decile").agg(players=("y", "size"), churned=("y", "sum"), churn_rate=("y", "mean"),
                                           avg_predicted=("p", "mean")).reset_index()
     save_csv(lift, "p7_risk_deciles")
 
