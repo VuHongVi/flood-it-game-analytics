@@ -1,0 +1,38 @@
+event_name,events_android,events_ios,users_android,users_ios,events_total,share_of_events,platform_coverage
+screen_view,1076964,1170659,6475,7602,2247623,0.39432,both
+user_engagement,742286,616672,6584,7004,1358958,0.238414,both
+level_start_quickplay,290338,233092,4053,6113,523430,0.0918298,both
+level_end_quickplay,173138,176591,3039,5129,349729,0.061356,both
+post_score,144772,97279,4379,4201,242051,0.0424651,both
+level_complete_quickplay,106062,85026,2163,3513,191088,0.0335242,both
+level_fail_quickplay,57924,79111,2355,3988,137035,0.0240412,both
+level_reset_quickplay,80250,42028,1609,1908,122278,0.0214523,both
+select_content,60275,44864,5375,5736,105139,0.0184454,both
+level_start,57320,17097,3315,1459,74417,0.0130556,both
+session_start,35880,38473,5755,6506,74353,0.0130444,both
+level_end,40993,13589,3065,1313,54582,0.00957579,both
+level_retry,39477,3868,2968,560,43345,0.00760439,both
+level_up,28139,7527,2874,1024,35666,0.00625719,both
+level_complete,28161,5825,2881,777,33986,0.00596246,both
+level_retry_quickplay,16427,13512,1965,975,29939,0.00525246,both
+level_fail,12777,4576,1656,723,17353,0.00304439,both
+spend_virtual_currency,5925,3438,1124,920,9363,0.00164263,both
+use_extra_steps,6285,2660,1161,723,8945,0.0015693,both
+level_reset,7044,1491,1406,400,8535,0.00149737,both
+firebase_campaign,5411,0,2735,0,5411,0.000949298,ANDROID only
+app_exception,4360,796,533,256,5156,0.000904561,both
+first_open,2915,1407,2913,1406,4322,0.000758246,both
+os_update,709,2581,705,2298,3290,0.000577193,both
+no_more_extra_steps,1823,969,643,550,2792,0.000489825,both
+app_remove,2639,0,2635,0,2639,0.000462982,ANDROID only
+app_update,46,2427,45,2267,2473,0.00043386,both
+ad_reward,1316,596,214,140,1912,0.000335439,both
+completed_5_levels,1534,333,1288,309,1867,0.000327544,both
+error,0,1714,0,595,1714,0.000300702,IOS only
+challenge_a_friend,524,0,246,0,524,9.19298e-05,ANDROID only
+in_app_purchase,11,16,11,16,27,4.73684e-06,both
+dynamic_link_app_open,19,0,11,0,19,3.33333e-06,ANDROID only
+app_clear_data,17,0,15,0,17,2.98246e-06,ANDROID only
+dynamic_link_first_open,16,0,16,0,16,2.80702e-06,ANDROID only
+challenge_accepted,5,0,4,0,5,8.77193e-07,ANDROID only
+notification_foreground,0,1,0,1,1,1.75439e-07,IOS only
