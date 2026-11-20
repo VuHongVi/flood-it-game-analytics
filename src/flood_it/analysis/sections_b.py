@@ -146,12 +146,26 @@ def growth(raw: dict) -> dict:
         "spike_screen_view_ratio": _r(sv["ratio_spike_vs_normal"], 3),
         "screen_view_avg_normal_day": _r(sv["avg_events_normal_day"], 0),
         "screen_view_avg_spike_day": _r(sv["avg_events_spike_day"], 0),
-        "avg_new_share_of_dau": _r((g["first_seen_users"] / g["dau"]).mean()),
+        # first_seen/DAU is left-censored (old players are "first seen" early in the window),
+        # so the share of new players is measured with first_open installs on non-spike days.
+        "avg_install_share_of_dau_non_spike": _r((normal["installs"] / normal["dau"]).mean()),
+        "first_seen_share_first_14d": _r((g["first_seen_users"] / g["dau"]).iloc[:14].mean()),
+        "first_seen_share_after_30d": _r((g["first_seen_users"] / g["dau"]).iloc[30:].mean()),
+        # stickiness on days whose 30-day MAU window contains no spike day
+        "avg_stickiness_clean_window": _r(_clean_stickiness(g).mean()),
+        "clean_window_first_date": _clean_stickiness(g).index.min().strftime("%Y-%m-%d"),
     }
 
 
+def _clean_stickiness(g: pd.DataFrame) -> pd.Series:
+    last_spike = g.loc[g["is_spike"], "activity_date"].max()
+    ok = g["full_30d_window"] & (g["activity_date"] > last_spike + pd.Timedelta(days=29))
+    return g.loc[ok].set_index("activity_date")["stickiness"]
+
+
 # ----------------------------------------------------------------------------- 3. retention
-def retention(raw: dict, cohort: pd.DataFrame, day_ns, end: pd.Timestamp) -> dict:
+def retention(raw: dict, cohort: pd.DataFrame, day_ns, end: pd.Timestamp,
+              spike_dates: list[str] | None = None) -> dict:
     ud = raw["11_user_day"]
     wk = M.retention_table(cohort, ud, day_ns, end, by="cohort_week")
     wk["cohort_week"] = wk["cohort_week"].dt.strftime("%Y-%m-%d")
@@ -185,6 +199,20 @@ def retention(raw: dict, cohort: pd.DataFrame, day_ns, end: pd.Timestamp) -> dic
                     "d7_worst_cohort": w.cohort_week, "d7_worst_value": _r(w.retention)})
     for _, r in plat.iterrows():
         out[f"d{int(r.day_n)}_retention_{r.platform.lower()}"] = _r(r.retention)
+
+    # Sensitivity: drop players whose day-N target date is a DAU-spike (tracking anomaly) day
+    spike = set(pd.to_datetime(spike_dates)) if spike_dates else set()
+    for n in (1, 7):
+        t = cohort["install_date"] + pd.Timedelta(days=n)
+        rr = M.retention_table(cohort[~t.isin(spike)], ud, [n], end, by=None).iloc[0]
+        out[f"d{n}_retention_excl_spike_targets"] = _r(rr.retention)
+    # trend: early (Jun-Jul) vs late (Sep) cohorts on D1
+    w1 = wk[wk.day_n == 1]
+    early = w1[w1.cohort_week < "2018-08-01"]
+    late = w1[w1.cohort_week >= "2018-09-01"]
+    out["d1_retention_cohorts_jun_jul"] = _r(early.retained_users.sum() / early.eligible_users.sum())
+    out["d1_retention_cohorts_sep"] = _r(late.retained_users.sum() / late.eligible_users.sum())
+    out["smallest_cohort_week"] = sizes.idxmin().strftime("%Y-%m-%d")
     return out
 
 

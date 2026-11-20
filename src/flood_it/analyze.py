@@ -27,7 +27,8 @@ def run_all(ctx: dict) -> dict:
     }}
     metrics["profile"] = sections_b.profile(raw, start, end)
     metrics["growth"] = sections_b.growth(raw)
-    metrics["retention"] = sections_b.retention(raw, cohort, a["retention_days"], end)
+    metrics["retention"] = sections_b.retention(raw, cohort, a["retention_days"], end,
+                                                 metrics["growth"]["spike_dates"])
     metrics["revenue"] = sections_b.revenue(raw, cohort, a["ltv_days"], end)
     # later sections (levels, segments, churn, stats) are registered in stage C
     try:

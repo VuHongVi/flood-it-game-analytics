@@ -88,7 +88,11 @@
     "spike_screen_view_ratio": 0.145,
     "screen_view_avg_normal_day": 20916.0,
     "screen_view_avg_spike_day": 3035.0,
-    "avg_new_share_of_dau": 0.243
+    "avg_install_share_of_dau_non_spike": 0.0851,
+    "first_seen_share_first_14d": 0.4725,
+    "first_seen_share_after_30d": 0.2012,
+    "avg_stickiness_clean_window": 0.0986,
+    "clean_window_first_date": "2018-07-31"
   },
   "retention": {
     "cohort_users": 4307,
@@ -134,7 +138,12 @@
     "d3_retention_ios": 0.0902,
     "d7_retention_ios": 0.0502,
     "d14_retention_ios": 0.0388,
-    "d30_retention_ios": 0.0226
+    "d30_retention_ios": 0.0226,
+    "d1_retention_excl_spike_targets": 0.2118,
+    "d7_retention_excl_spike_targets": 0.0558,
+    "d1_retention_cohorts_jun_jul": 0.2634,
+    "d1_retention_cohorts_sep": 0.1483,
+    "smallest_cohort_week": "2018-06-25"
   },
   "revenue": {
     "purchases": 27,
