@@ -51,7 +51,7 @@ def _cmp_csv(new: pd.DataFrame, old: pd.DataFrame, path: str) -> list[str]:
         if pd.api.types.is_numeric_dtype(a) and pd.api.types.is_numeric_dtype(b):
             ok = np.isclose(a.astype(float), b.astype(float), rtol=RTOL, atol=ATOL, equal_nan=True)
         else:
-            ok = (a.astype(str) == b.astype(str)).values
+            ok = (a.astype(object).fillna("").astype(str) == b.astype(object).fillna("").astype(str)).values
         if not ok.all():
             errs.append(f"{path}:{c} differs in {int((~ok).sum())} rows")
     return errs
