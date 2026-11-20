@@ -1,9 +1,72 @@
 {
-  "00_table_inventory_wide": {
+  "00_table_inventory": {
     "bytes_processed": 57000000,
-    "created_utc": "2026-11-20T20:16:27Z",
+    "created_utc": "2026-11-20T20:28:01Z",
     "rows": 114,
     "sql_file": "00_table_inventory.sql",
-    "sql_hash": "aa92dde63672303f"
+    "sql_hash": "dffe7257c56f2123"
+  },
+  "01_event_counts": {
+    "bytes_processed": 384516326,
+    "created_utc": "2026-11-20T20:24:08Z",
+    "rows": 65,
+    "sql_file": "01_event_counts.sql",
+    "sql_hash": "63f1cc33e647b6da"
+  },
+  "02_event_param_keys": {
+    "bytes_processed": 891401168,
+    "created_utc": "2026-11-20T20:24:19Z",
+    "rows": 205,
+    "sql_file": "02_event_param_keys.sql",
+    "sql_hash": "45205f614bcb4188"
+  },
+  "10_users": {
+    "bytes_processed": 699939490,
+    "created_utc": "2026-11-20T20:25:56Z",
+    "rows": 15175,
+    "sql_file": "10_users.sql",
+    "sql_hash": "ca603587f1279308"
+  },
+  "11_user_day": {
+    "bytes_processed": 961804378,
+    "created_utc": "2026-11-20T20:26:22Z",
+    "rows": 59037,
+    "sql_file": "11_user_day.sql",
+    "sql_hash": "af071e667b4bfbf3"
+  },
+  "12_iap": {
+    "bytes_processed": 1173944810,
+    "created_utc": "2026-11-20T20:26:33Z",
+    "rows": 27,
+    "sql_file": "12_iap.sql",
+    "sql_hash": "9249deb40da26dad"
+  },
+  "20_daily_activity": {
+    "bytes_processed": 343889198,
+    "created_utc": "2026-11-20T20:28:11Z",
+    "rows": 114,
+    "sql_file": "20_daily_activity.sql",
+    "sql_hash": "4a86f0a8833972a8"
+  },
+  "21_spike_event_mix": {
+    "bytes_processed": 61300619,
+    "created_utc": "2026-11-20T20:30:50Z",
+    "rows": 1017,
+    "sql_file": "21_spike_event_mix.sql",
+    "sql_hash": "e19ed0180c64095a"
+  },
+  "30_retention_cohort": {
+    "bytes_processed": 389489198,
+    "created_utc": "2026-11-20T20:28:21Z",
+    "rows": 85,
+    "sql_file": "30_retention_cohort.sql",
+    "sql_hash": "19c0338b8eb31394"
+  },
+  "40_revenue_summary": {
+    "bytes_processed": 1172569696,
+    "created_utc": "2026-11-20T20:33:24Z",
+    "rows": 3,
+    "sql_file": "40_revenue_summary.sql",
+    "sql_hash": "a3f0b23db0bdc717"
   }
 }

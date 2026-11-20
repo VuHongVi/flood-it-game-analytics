@@ -23,6 +23,8 @@ analysis:
     feature_window_days: 1    # behaviour on install day only (avoid leakage)
     churn_window: [7, 30]     # churned = no activity on day 7..30 after install
   random_seed: 42
+  # Window used by sql/21_spike_event_mix.sql to explain the DAU spikes found in Phase B
+  spike_window: ["20180616", "20180703"]
 
 paths:
   sql_dir: sql
