@@ -308,5 +308,11 @@
     "ab_n_per_arm": 6834,
     "ab_sample_installs_per_day": 40.3,
     "ab_days_needed_at_sample_volume": 340
+  },
+  "validation": {
+    "checks": 32,
+    "passed": 32,
+    "failed": 0,
+    "failed_checks": []
   }
 }

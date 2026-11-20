@@ -26,6 +26,10 @@ analysis:
   # Window used by sql/21_spike_event_mix.sql to explain the DAU spikes found in Phase B
   spike_window: ["20180616", "20180703"]
 
+links:
+  repo_url: null        # set after the GitHub repo is created (stage E)
+  dashboard_url: null   # set after the Claude artifact is published (stage E)
+
 paths:
   sql_dir: sql
   data_dir: data

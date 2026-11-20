@@ -62,6 +62,8 @@ def levels(raw: dict, cohort: pd.DataFrame) -> dict:
     drop = pd.DataFrame({"level": reached.index, "new_players_started": reached.values,
                          "new_players_last_level": stopped.values})
     drop["quit_rate_at_level"] = drop["new_players_last_level"] / drop["new_players_started"]
+    # level 30 is the last level: stopping there means finishing, not quitting
+    drop.loc[drop["level"] == drop["level"].max(), "quit_rate_at_level"] = np.nan
     valid = valid.merge(drop, on="level", how="left")
     save_csv(valid, "p5_level_funnel")
 
