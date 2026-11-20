@@ -1,0 +1,3 @@
+timestamp_utc,query_name,sql_hash,action,bytes_processed,bytes_billed,ref_cost_usd,rows,job_id,note
+2026-11-20T20:16:21Z,00_table_inventory_wide,aa92dde63672303f,dry_run,57000000,0,0,,,
+2026-11-20T20:16:27Z,00_table_inventory_wide,aa92dde63672303f,run,57000000,57671680,0.000328,114,7e24a989-172a-40b5-8964-749461c90256,

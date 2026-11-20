@@ -1,0 +1,9 @@
+{
+  "00_table_inventory_wide": {
+    "bytes_processed": 57000000,
+    "created_utc": "2026-11-20T20:16:27Z",
+    "rows": 114,
+    "sql_file": "00_table_inventory.sql",
+    "sql_hash": "aa92dde63672303f"
+  }
+}

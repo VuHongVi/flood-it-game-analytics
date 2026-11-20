@@ -1,0 +1,35 @@
+# Central configuration for the Flood-It analytics pipeline.
+# Every SQL file and analysis module reads its parameters from here (no hard-coding).
+
+bigquery:
+  project_id: applied-range-426214-s5        # billing/quota project (BigQuery Sandbox, no billing)
+  location: US
+  source_table: firebase-public-project.analytics_153293282.events_*
+  # Cost guard -------------------------------------------------------------
+  max_bytes_per_query: 3_000_000_000        # 3 GB: dry-run estimate above this => query is BLOCKED
+  maximum_bytes_billed: 3_000_000_000       # passed to BigQuery job config as a hard server-side cap
+  monthly_budget_bytes: 200_000_000_000     # 200 GB self-imposed (Sandbox free tier = 1 TB/month)
+  reference_usd_per_tib: 6.25               # on-demand list price, only used to log a *reference* cost
+
+analysis:
+  # Inclusive date range of the export, as _TABLE_SUFFIX strings (YYYYMMDD).
+  # Filled after the profiling query in Phase B confirms the real range.
+  start_suffix: "20180612"
+  end_suffix: "20181003"
+  # Convention: all "day" logic uses event_date (property time zone), see README.
+  retention_days: [1, 3, 7, 14, 30]
+  ltv_days: [7, 30]
+  churn:
+    feature_window_days: 1    # behaviour on install day only (avoid leakage)
+    churn_window: [7, 30]     # churned = no activity on day 7..30 after install
+  random_seed: 42
+
+paths:
+  sql_dir: sql
+  data_dir: data
+  cache_dir: data/cache
+  results_dir: results
+  figures_dir: figures
+  reports_dir: reports
+  powerbi_dir: powerbi
+  cost_log: data/query_cost_log.csv

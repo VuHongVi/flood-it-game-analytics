@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+*.egg-info/
+.env
+# raw exports are never committed; only aggregated CSVs live in data/
+data/raw/
+*.parquet

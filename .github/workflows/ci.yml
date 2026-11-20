@@ -1,0 +1,20 @@
+name: ci
+on:
+  push:
+  pull_request:
+jobs:
+  test-and-reproduce:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt && pip install -e .
+      - name: Unit tests
+        run: pytest -q
+      - name: Reproduce pipeline from cache (no BigQuery, no credentials)
+        run: python -m flood_it run --mode cache
+      - name: Fail if committed outputs drift from a fresh cache run
+        run: git diff --stat --exit-code -- results data/*.csv powerbi/data
