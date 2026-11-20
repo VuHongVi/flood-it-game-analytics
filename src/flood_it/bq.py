@@ -127,7 +127,7 @@ class BigQueryRunner:
         return {}
 
     def _save_manifest(self, m: dict[str, Any]) -> None:
-        self.manifest_path.write_text(json.dumps(m, indent=2, sort_keys=True), encoding="utf-8")
+        self.manifest_path.write_text(json.dumps(m, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
 
     # -- cost log
     def _log_cost(self, **row: Any) -> None:
@@ -136,7 +136,7 @@ class BigQueryRunner:
         b = row.get("bytes_billed") or row.get("bytes_processed") or 0
         row.setdefault("ref_cost_usd", round(b / 2**40 * self.cfg.bq["reference_usd_per_tib"], 6))
         with open(self.cost_log, "a", newline="", encoding="utf-8") as f:
-            w = csv.DictWriter(f, fieldnames=COST_LOG_FIELDS)
+            w = csv.DictWriter(f, fieldnames=COST_LOG_FIELDS, lineterminator="\n")
             if new:
                 w.writeheader()
             w.writerow({k: row.get(k, "") for k in COST_LOG_FIELDS})
