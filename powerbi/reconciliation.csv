@@ -1,0 +1,41 @@
+check_id,page,visual,measure_or_field,filter_context,expected_value,metrics_json_key,tolerance
+1,Overview,KPI card,[Players in Window],none,15175,profile.total_users,0
+2,Overview,KPI card,[Cohort Installs],all cohort_week,4307,retention.cohort_users,0
+3,Overview,KPI card,[Avg DAU excl Spikes],all dates,471.4,growth.avg_dau_excl_spikes,0.05
+4,Overview,KPI card,[Avg DAU],all dates,517.9,growth.avg_dau,0.05
+5,Overview,KPI card,[Avg Stickiness Clean],all dates,0.0986,growth.avg_stickiness_clean_window,0.0001
+6,Overview / Retention,KPI card,[Retention D1],all cohort_week,0.2147,retention.d1_retention,0.0001
+7,Overview / Retention,KPI card,[Retention D3],all cohort_week,0.1044,retention.d3_retention,0.0001
+8,Overview / Retention,KPI card,[Retention D7],all cohort_week,0.0554,retention.d7_retention,0.0001
+9,Overview / Retention,KPI card,[Retention D14],all cohort_week,0.0362,retention.d14_retention,0.0001
+10,Overview / Retention,KPI card,[Retention D30],all cohort_week,0.021,retention.d30_retention,0.0001
+11,Retention,Retention by platform,[Retention by Platform],"platform=ANDROID, day_n=1",0.2269,retention.d1_retention_android,0.0001
+12,Retention,Retention by platform,[Retention by Platform],"platform=IOS, day_n=1",0.1895,retention.d1_retention_ios,0.0001
+13,Growth,DAU,[Installs],all dates,4319,growth.total_installs_first_open,0
+14,Growth,DAU,[Spike Days],all dates,7,growth.n_spike_days,0
+15,Revenue,Monetisation,[Revenue USD],all platforms,31.86,revenue.revenue_usd,0.005
+16,Revenue,Monetisation,[Payers],all platforms,27,revenue.payers,0
+17,Revenue,Monetisation,[Purchases],all platforms,27,revenue.purchases,0
+18,Overview / Revenue,KPI card,[Payer Rate],all platforms,0.001779,revenue.payer_rate,1e-06
+19,Revenue,Monetisation,[ARPU],all platforms,0.002099,revenue.arpu_usd,1e-06
+20,Revenue,Monetisation,[ARPDAU],all platforms,0.00054,revenue.arpdau_usd,1e-06
+21,Overview / Revenue,KPI card,[ARPPU],all platforms,1.1799,revenue.arppu_usd,0.0001
+22,Revenue,Monetisation,[Payer Rate],platform=ANDROID,0.001484,revenue.payer_rate_android,1e-06
+23,Revenue,Monetisation,[Payer Rate],platform=IOS,0.002061,revenue.payer_rate_ios,1e-06
+24,Revenue,LTV,[LTV D7],none,0.002701,revenue.ltv_d7_usd,1e-06
+25,Revenue,LTV,[LTV D30],none,0.002701,revenue.ltv_d30_usd,1e-06
+26,Levels,Level funnel,[Reach Rate],level=10,0.2784,levels.reach_rate_level10,0.0001
+27,Levels,Level funnel,[Reach Rate],level=30,0.0784,levels.reach_rate_level30,0.0001
+28,Levels,Difficulty,[Completion per Attempt],level=27,0.0447,levels.hardest_levels_completion.0,0.0001
+29,Levels,Difficulty,[Quit Rate],level=27,0.4574,levels.top_quit_rates.0,0.0001
+30,Levels,Difficulty,[Attempts per Player],level=27,9.07,levels.level27_attempts_per_player,0.005
+31,Segments,Engagement,[Segment D7 Retention],"dimension='Day-0 engagement time', segment='<1 min'",0.0226,segments.d7_retention_eng_lt1min,0.0001
+32,Segments,Engagement,[Segment D7 Retention],"dimension='Day-0 engagement time', segment='15+ min'",0.12,segments.d7_retention_eng_15plus,0.0001
+33,Segments,Mode,[Segment D1 Retention],"dimension='Day-0 game mode', segment='both'",0.2909,segments.d1_retention_by_mode.both,0.0001
+34,Churn,ROC,[Test AUC],model=logistic_regression,0.6826,churn.lr_test_auc,0.0001
+35,Churn,ROC,[Test AUC],model=decision_tree,0.6023,churn.tree_test_auc,0.0001
+36,Churn,Risk deciles,[Decile Churn Rate],risk_decile=10,0.8649,churn.top_decile_churn_rate,0.0001
+37,Churn,Risk deciles,[Decile Churn Rate],risk_decile=1,0.5135,churn.bottom_decile_churn_rate,0.0001
+38,A/B,Observational tests,rate_a,"comparison='Platform: iOS vs Android', metric='D1 retention'",0.1895,stats.d1_ios,0.0001
+39,A/B,Observational tests,rate_b,"comparison='Platform: iOS vs Android', metric='D1 retention'",0.2269,stats.d1_android,0.0001
+40,A/B,Power analysis,n_per_arm,mde_abs=0.02,6834,stats.ab_n_per_arm,0

@@ -1,0 +1,99 @@
+// =============================================================================
+// Flood-It analytics - DAX measures. Definitions mirror src/flood_it/analysis/*.py
+// exactly; expected values are in powerbi/reconciliation.csv.
+// Create them in a dedicated table, e.g. `_Measures` (Enter data -> empty table).
+// =============================================================================
+
+// ---------- Growth (fact_daily_activity, one row per event_date) ----------
+// DAU on the current day(s). At day grain = distinct active players.
+DAU = SUM ( fact_daily_activity[dau] )
+// Mean DAU over the days in context (all 114 days by default).
+Avg DAU = AVERAGE ( fact_daily_activity[dau] )
+// Mean DAU excluding spike days (tracking/sampling artefacts).
+Avg DAU excl Spikes = CALCULATE ( AVERAGE ( fact_daily_activity[dau] ), fact_daily_activity[is_spike_day] = 0 )
+Installs = SUM ( fact_daily_activity[installs] )
+Avg Daily Installs = AVERAGE ( fact_daily_activity[installs] )
+// WAU / MAU are pre-computed distinct counts (trailing 7 / 30 days) - not additive across days.
+WAU = SUM ( fact_daily_activity[wau] )
+MAU = SUM ( fact_daily_activity[mau] )
+// Stickiness on one day = DAU / MAU, only when a full 30-day window exists.
+Stickiness =
+    IF ( MAX ( fact_daily_activity[full_30d_window] ) = 1,
+         DIVIDE ( SUM ( fact_daily_activity[dau] ), SUM ( fact_daily_activity[mau] ) ) )
+// Headline: mean of daily DAU/MAU over spike-free 30-day windows.
+Avg Stickiness Clean =
+    AVERAGEX (
+        FILTER ( fact_daily_activity, fact_daily_activity[clean_stickiness_window] = 1 ),
+        DIVIDE ( fact_daily_activity[dau], fact_daily_activity[mau] ) )
+Spike Days = CALCULATE ( COUNTROWS ( fact_daily_activity ), fact_daily_activity[is_spike_day] = 1 )
+
+// ---------- Retention (fact_retention_cohort: cohort_week x day_n) ----------
+// Classic Day-N retention with right-censoring: retained / ELIGIBLE (never / all installs).
+Retention = DIVIDE ( SUM ( fact_retention_cohort[retained_users] ), SUM ( fact_retention_cohort[eligible_users] ) )
+Retention D1  = CALCULATE ( [Retention], fact_retention_cohort[day_n] = 1 )
+Retention D3  = CALCULATE ( [Retention], fact_retention_cohort[day_n] = 3 )
+Retention D7  = CALCULATE ( [Retention], fact_retention_cohort[day_n] = 7 )
+Retention D14 = CALCULATE ( [Retention], fact_retention_cohort[day_n] = 14 )
+Retention D30 = CALCULATE ( [Retention], fact_retention_cohort[day_n] = 30 )
+// Cohort size (same for every day_n of a cohort -> take one day_n).
+Cohort Installs = CALCULATE ( SUM ( fact_retention_cohort[cohort_users] ), fact_retention_cohort[day_n] = 1 )
+// Curve (fact_retention_curve, day_n 0..30 pooled)
+Retention Curve = DIVIDE ( SUM ( fact_retention_curve[retained_users] ), SUM ( fact_retention_curve[eligible_users] ) )
+Retention CI Low = MAX ( fact_retention_curve[ci_low] )
+Retention CI High = MAX ( fact_retention_curve[ci_high] )
+Retention by Platform = DIVIDE ( SUM ( fact_retention_platform[retained_users] ), SUM ( fact_retention_platform[eligible_users] ) )
+
+// ---------- Monetisation (fact_monetization_platform; additive over platforms) ----------
+Revenue USD = SUM ( fact_monetization_platform[revenue_usd] )
+Active Players = SUM ( fact_monetization_platform[active_users] )
+Player Days = SUM ( fact_monetization_platform[user_days] )
+Payers = SUM ( fact_monetization_platform[payers] )
+Purchases = SUM ( fact_monetization_platform[purchases] )
+// Payer rate = payers / active players
+Payer Rate = DIVIDE ( [Payers], [Active Players] )
+// ARPU = revenue / active players (whole window)
+ARPU = DIVIDE ( [Revenue USD], [Active Players] )
+// ARPDAU = revenue / player-days (= revenue / sum of daily DAU)
+ARPDAU = DIVIDE ( [Revenue USD], [Player Days] )
+// ARPPU = revenue / payers
+ARPPU = DIVIDE ( [Revenue USD], [Payers] )
+// LTV (fact_ltv_curve, fixed population): cumulative revenue days 0..N / installs observable 30 days
+LTV = DIVIDE ( SUM ( fact_ltv_curve[revenue_usd] ), SUM ( fact_ltv_curve[eligible_users] ) )
+LTV D7  = CALCULATE ( [LTV], fact_ltv_curve[day_n] = 7 )
+LTV D30 = CALCULATE ( [LTV], fact_ltv_curve[day_n] = 30 )
+IAP Revenue (transactions) = SUM ( fact_iap_transactions[revenue_usd] )
+
+// ---------- Levels (fact_level_funnel, one row per level 1..30) ----------
+Level Starts = SUM ( fact_level_funnel[starts] )
+// Difficulty: completion per attempt = completes / starts
+Completion per Attempt = DIVIDE ( SUM ( fact_level_funnel[completes] ), SUM ( fact_level_funnel[starts] ) )
+// Funnel: players who started the level / players who started level 1
+Reach Rate =
+    DIVIDE ( SUM ( fact_level_funnel[users_started] ),
+             CALCULATE ( SUM ( fact_level_funnel[users_started] ), REMOVEFILTERS ( fact_level_funnel ), fact_level_funnel[level] = 1 ) )
+// Quit rate among NEW players; blank at level 30 (last level = finished, not quit)
+Quit Rate =
+    IF ( MAX ( fact_level_funnel[level] ) = 30, BLANK (),
+         DIVIDE ( SUM ( fact_level_funnel[new_players_last_level] ), SUM ( fact_level_funnel[new_players_started] ) ) )
+Attempts per Player = DIVIDE ( SUM ( fact_level_funnel[starts] ), SUM ( fact_level_funnel[users_started] ) )
+Quickplay Completion = DIVIDE ( SUM ( fact_quickplay_boards[completes] ), SUM ( fact_quickplay_boards[starts] ) )
+
+// ---------- Segments (fact_day0_segments: dimension x segment) ----------
+Segment Players = SUM ( fact_day0_segments[players] )
+Segment D1 Retention = DIVIDE ( SUM ( fact_day0_segments[d1_retained] ), SUM ( fact_day0_segments[d1_eligible] ) )
+Segment D7 Retention = DIVIDE ( SUM ( fact_day0_segments[d7_retained] ), SUM ( fact_day0_segments[d7_eligible] ) )
+Segment Churn Rate = DIVIDE ( SUM ( fact_day0_segments[churned] ), SUM ( fact_day0_segments[churn_eligible] ) )
+
+// ---------- Churn model ----------
+Decile Churn Rate = DIVIDE ( SUM ( fact_churn_risk_deciles[churned] ), SUM ( fact_churn_risk_deciles[players] ) )
+Test AUC = MAX ( fact_churn_model_performance[test_auc] )
+CV AUC = MAX ( fact_churn_model_performance[cv_auc_mean] )
+Permutation Importance = MAX ( fact_churn_feature_importance[permutation_auc_drop] )
+
+// ---------- KPI lookup (any scalar of results/metrics.json) ----------
+// Used for cards whose value is a model or test statistic, e.g. KPI("churn.lr_test_auc").
+// Create one measure per card, e.g.:
+Churn LR Test AUC = CALCULATE ( MAX ( kpi_metrics[value] ), kpi_metrics[metric_key] = "churn.lr_test_auc" )
+Churn Rate = CALCULATE ( MAX ( kpi_metrics[value] ), kpi_metrics[metric_key] = "churn.churn_rate" )
+Players in Window = CALCULATE ( MAX ( kpi_metrics[value] ), kpi_metrics[metric_key] = "profile.total_users" )
+AB N per Arm = CALCULATE ( MAX ( kpi_metrics[value] ), kpi_metrics[metric_key] = "stats.ab_n_per_arm" )

@@ -1,0 +1,5 @@
+segment,users,share
+acquired_before_window,9086,0.598748
+acquired_in_window_with_first_open,4307,0.283822
+acquired_in_window_missing_first_open,1782,0.11743
+other,0,0

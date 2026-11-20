@@ -1,0 +1,5 @@
+metric,baseline,mde_abs,mde_relative,alpha,power,n_per_arm,total_n,sample_installs_per_day,days_needed_at_sample_volume,days_needed_incl_d1_lag
+D1 retention,0.2147,0.01,0.0465766,0.05,0.8,26908,53816,40.2617,1337,1338
+D1 retention,0.2147,0.02,0.0931532,0.05,0.8,6834,13668,40.2617,340,341
+D1 retention,0.2147,0.03,0.13973,0.05,0.8,3084,6168,40.2617,154,155
+D1 retention,0.2147,0.05,0.232883,0.05,0.8,1142,2284,40.2617,57,58

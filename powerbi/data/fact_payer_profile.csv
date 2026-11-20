@@ -1,0 +1,3 @@
+segment,players,median_active_days,median_sessions,median_engagement_min,median_level_starts,median_quickplay_starts,share_watched_rewarded_ad
+non-payer,15148,1,1,3.90136,0,2,0.0231054
+payer,27,3,4,23.7693,7,6,0.148148

@@ -1,0 +1,13 @@
+platform,traffic_source,users
+ANDROID,(direct),4250
+ANDROID,google-play,3017
+ANDROID,(null),64
+ANDROID,google,48
+ANDROID,invite_a_friend,21
+ANDROID,firebase,5
+ANDROID,AppLovin,3
+ANDROID,Google,1
+ANDROID,rj,1
+IOS,(direct),7758
+IOS,google,6
+IOS,Firebase,1
