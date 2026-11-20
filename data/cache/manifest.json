@@ -68,5 +68,19 @@
     "rows": 3,
     "sql_file": "40_revenue_summary.sql",
     "sql_hash": "a3f0b23db0bdc717"
+  },
+  "50_level_stats": {
+    "bytes_processed": 904804378,
+    "created_utc": "2026-11-20T20:39:04Z",
+    "rows": 33,
+    "sql_file": "50_level_stats.sql",
+    "sql_hash": "9eeb88ff6e45da2c"
+  },
+  "51_user_level": {
+    "bytes_processed": 1142201168,
+    "created_utc": "2026-11-20T20:39:18Z",
+    "rows": 46376,
+    "sql_file": "51_user_level.sql",
+    "sql_hash": "90bf5bf094f82911"
   }
 }

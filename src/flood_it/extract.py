@@ -19,6 +19,8 @@ QUERIES: list[tuple[str, str, dict]] = [
     ("21_spike_event_mix", "21_spike_event_mix.sql", {"spike_start": "SPIKE0", "spike_end": "SPIKE1"}),
     ("30_retention_cohort", "30_retention_cohort.sql", {"day_ns": "RETENTION_DAYS"}),
     ("40_revenue_summary", "40_revenue_summary.sql", {}),
+    ("50_level_stats", "50_level_stats.sql", {}),
+    ("51_user_level", "51_user_level.sql", {}),
 ]
 
 
