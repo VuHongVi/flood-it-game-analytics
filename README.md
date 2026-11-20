@@ -6,7 +6,7 @@ growth, cohort retention, monetisation, level difficulty, player segments, churn
 statistical testing and A/B-test design. Every number in this README is generated from
 `results/metrics.json` by the pipeline - nothing is typed by hand.
 
-**Interactive dashboard:** link added after publishing (stage E).
+**Interactive dashboard:** https://claude.ai/artifact/PsZ2SeHA6kmkwEUH76zBeG
 **Short report:** [reports/report.md](reports/report.md) - **Validation:** [results/validation_report.md](results/validation_report.md) (32/32 checks PASS)
 
 ## Key numbers

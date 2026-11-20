@@ -28,7 +28,7 @@ analysis:
 
 links:
   repo_url: https://github.com/VuHongVi/flood-it-game-analytics
-  dashboard_url: null   # set after the Claude artifact is published (stage E)
+  dashboard_url: https://claude.ai/artifact/PsZ2SeHA6kmkwEUH76zBeG
 
 paths:
   sql_dir: sql

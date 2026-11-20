@@ -1,0 +1,1 @@
+{"title": "Headline metrics", "description": "Every scalar of results/metrics.json, one row per metric_key. File: powerbi/data/kpi_metrics.csv.", "source": {"kind": "file", "url": "/_blob/44619f8b4262f9f9f045067fb7748dd2", "name": "data_bundle.json", "format": "json"}, "updated": {"at": "2026-11-20T21:02:23Z", "by": "flood_it pipeline (python -m flood_it run)"}, "fixed": true}
