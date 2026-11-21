@@ -110,3 +110,23 @@ def test_wilson_ci_bounds():
     lo, hi = M.wilson_ci(np.array([0, 50]), np.array([10, 100]))
     assert lo[0] == pytest.approx(0, abs=1e-12) and 0 < hi[0] < 0.35
     assert lo[1] < 0.5 < hi[1]
+
+
+def test_uplift_per_1000():
+    assert M.uplift_per_1000(0.3, 0.02, 0.04) == pytest.approx(6.0)
+    assert M.uplift_per_1000(0.3, 0.04, 0.04) == 0
+
+
+def test_quit_reduction_never_negative():
+    r = M.quit_reduction(0.45, 0.10, 200)
+    assert r["continue_per_1000_reaching"] == pytest.approx(350)
+    assert r["extra_players_in_cohort"] == pytest.approx(70)
+    assert M.quit_reduction(0.05, 0.10, 200)["extra_players_in_cohort"] == 0
+
+
+def test_top_k_capture_lift():
+    d = pd.DataFrame({"risk_decile": [1, 2, 3, 4], "players": [10, 10, 10, 10], "churned": [1, 2, 3, 4]})
+    r = M.top_k_capture(d, 2)
+    assert r["capture"] == pytest.approx(0.7)
+    assert r["reach"] == pytest.approx(0.5)
+    assert r["lift"] == pytest.approx(1.4)

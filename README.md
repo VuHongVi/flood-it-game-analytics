@@ -10,6 +10,32 @@ statistical testing and A/B-test design. Every number in this README is generate
 **Short report:** [reports/report.md](reports/report.md) - **Validation:** [results/validation_report.md](results/validation_report.md) (32/32 checks PASS)
 **Power BI report:** [powerbi/FloodIt.pbip](powerbi/FloodIt.pbip) (open in Power BI Desktop, then Refresh) - **PDF:** [reports/FloodIt_PowerBI_report.pdf](reports/FloodIt_PowerBI_report.pdf)
 
+## In 30 seconds
+
+![Power BI report - overview page](figures/powerbi_01_overview.png)
+
+- **Business question:** why do new Flood-It players leave, does the game make money, and what should the team test first?
+- **Data and stack:** 5,700,000 Firebase / GA4 events from 15,175 players on BigQuery
+  (nested `UNNEST` SQL behind a dry-run cost guard), Python (pandas, statsmodels, scikit-learn), Power BI (DAX, TMDL/PBIR),
+  GitHub Actions re-running the whole pipeline on every push.
+- **Answer:** only 21.5% of new players return the next day and 2.1% after a month;
+  the first session and one difficulty wall (level 27) are the two clearest leaks, and IAP is negligible
+  (payer rate 0.18%), so retention is the lever.
+- **Trust:** every headline number is computed twice (SQL and pandas, 32/32 checks pass), the Power BI
+  model is reconciled to the pipeline, and the mistakes made along the way are logged in
+  [docs/ai_corrections.md](docs/ai_corrections.md).
+
+### What to do, and what it is worth
+
+| Recommendation | Evidence | Size of the prize (scenario on observed rates, not causal) | How to validate |
+|---|---|---|---|
+| **Fix the first minute** | 29% of installs play under 1 min on day 0; their D7 is 2.3% vs 4.2% for 1-5 min | +5.7 D7 players per 1,000 installs (D7 5.5% -> 6.1%, +10% relative) if they behaved like the 1-5 min band | A/B a tutorial board; primary metric = share of installs reaching 1+ min on day 0 |
+| **Rebalance level 27** | 45.7% of new players who reach it stop there vs a median of 6.3% on other levels | 394 more of every 1,000 players who reach it keep playing (111 players in this sample) at the median quit rate | A/B the difficulty; guardrails D7 and rewarded-ad views |
+| **Target at-risk installs** | churn model on install-day behaviour, test AUC 0.68 | contacting the riskiest 30% finds 36% of churners (1.2x random): good enough to rank, too weak to personalise | re-engagement push with a holdout group |
+| **Plan the D1 test** | baseline D1 21.5% | +2 pp needs 6,834 players per arm, ~340 days at the sampled 40.3 installs/day | run on full traffic or test bigger changes |
+
+Sizes are what the observed gap is worth if it closed: they rank the tests; the A/B tests measure the real effect.
+
 ## Power BI report
 
 One page per analysis section, read as a story: a takeaway headline, the metric definition under every

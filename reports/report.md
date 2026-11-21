@@ -35,6 +35,17 @@ better first minute, each validated by an A/B test.
 - **Marketing - check channel and platform quality.** Compare D1/D7 and payer rate per channel with a holdout or geo test before shifting budget; the iOS gap deserves an app-version / device audit.
 - **Data - fix instrumentation before scaling analysis.** Log ad revenue (impression-level `ad_impression` with value), populate `event_value_in_usd`, store `level` in one type, stop the `screen_view` drops, and export unsampled data.
 
+## What each recommendation is worth
+
+| Recommendation | Evidence | Size of the prize (scenario on observed rates, not causal) | How to validate |
+|---|---|---|---|
+| **Fix the first minute** | 29% of installs play under 1 min on day 0; their D7 is 2.3% vs 4.2% for 1-5 min | +5.7 D7 players per 1,000 installs (D7 5.5% -> 6.1%, +10% relative) if they behaved like the 1-5 min band | A/B a tutorial board; primary metric = share of installs reaching 1+ min on day 0 |
+| **Rebalance level 27** | 45.7% of new players who reach it stop there vs a median of 6.3% on other levels | 394 more of every 1,000 players who reach it keep playing (111 players in this sample) at the median quit rate | A/B the difficulty; guardrails D7 and rewarded-ad views |
+| **Target at-risk installs** | churn model on install-day behaviour, test AUC 0.68 | contacting the riskiest 30% finds 36% of churners (1.2x random): good enough to rank, too weak to personalise | re-engagement push with a holdout group |
+| **Plan the D1 test** | baseline D1 21.5% | +2 pp needs 6,834 players per arm, ~340 days at the sampled 40.3 installs/day | run on full traffic or test bigger changes |
+
+Sizes are scenario arithmetic on observed (non-randomised) rates: they rank the tests; A/B tests measure the real effect.
+
 ## Caveats
 
 - Sampled export (50,000 events/day): absolute DAU, installs and revenue describe the sample, not the game. Retention, rates and model results are the reliable outputs.

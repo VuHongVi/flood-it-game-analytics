@@ -11,6 +11,11 @@
   2.3% on D7 vs 12.0% for 15+ minutes; built a churn model on
   install-day behaviour (logistic regression, test AUC 0.68) and an A/B test plan with power analysis
   (6,834 players per arm for +2 pp D1).
+- Sized each recommendation: closing the first-minute gap is worth +5.7
+  D7 players per 1,000 installs (+10% relative D7) and bringing level
+  27 to a median quit rate keeps 394 more of every
+  1,000 players who reach it; showed the churn model is a ranking tool (1.2x random
+  in the riskiest 30%), not a personalisation tool.
 - Diagnosed data-quality traps with SQL (sampled export, DAU spikes caused by missing screen_view events, mixed-type
-  params, missing first_open) and delivered an interactive dashboard plus a Power BI model with DAX measures reconciled
-  to the pipeline.
+  params, missing first_open) and delivered a 9-page Power BI report (DAX, TMDL/PBIR generated from code) reconciled
+  to the pipeline row by row.
