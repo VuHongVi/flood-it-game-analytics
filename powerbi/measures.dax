@@ -105,3 +105,15 @@ Churn LR Test AUC = CALCULATE ( MAX ( kpi_metrics[value] ), kpi_metrics[metric_k
 Churn Rate = CALCULATE ( MAX ( kpi_metrics[value] ), kpi_metrics[metric_key] = "churn.churn_rate" )
 Players in Window = CALCULATE ( MAX ( kpi_metrics[value] ), kpi_metrics[metric_key] = "profile.total_users" )
 AB N per Arm = CALCULATE ( MAX ( kpi_metrics[value] ), kpi_metrics[metric_key] = "stats.ab_n_per_arm" )
+
+// ---------- Impact (opportunity sizing from results/metrics.json -> impact.*; scenario, not causal) ----------
+Impact First Minute Extra D7 = CALCULATE ( MAX ( kpi_metrics[value] ), kpi_metrics[metric_key] = "impact.first_minute_extra_d7_per_1000_installs" )
+Impact First Minute D7 Lift = CALCULATE ( MAX ( kpi_metrics[value] ), kpi_metrics[metric_key] = "impact.first_minute_d7_relative_lift" )
+Impact Wall Continue per 1000 = CALCULATE ( MAX ( kpi_metrics[value] ), kpi_metrics[metric_key] = "impact.wall_continue_per_1000_reaching" )
+Impact Wall Quit vs Median = FORMAT ( CALCULATE ( MAX ( kpi_metrics[value] ), kpi_metrics[metric_key] = "impact.wall_quit_rate" ), "0.0%" ) & " vs " & FORMAT ( CALCULATE ( MAX ( kpi_metrics[value] ), kpi_metrics[metric_key] = "impact.wall_benchmark_quit_rate_median" ), "0.0%" )
+Impact Churn Top 30% Lift = CALCULATE ( MAX ( kpi_metrics[value] ), kpi_metrics[metric_key] = "impact.churn_top3_deciles_lift" )
+Impact Churn Top 30% Capture = CALCULATE ( MAX ( kpi_metrics[value] ), kpi_metrics[metric_key] = "impact.churn_top3_deciles_capture" )
+Cumulative Churn Capture = VAR d = MAX ( fact_churn_risk_deciles[risk_decile] ) RETURN DIVIDE ( CALCULATE ( SUM ( fact_churn_risk_deciles[churned] ), REMOVEFILTERS ( fact_churn_risk_deciles ), fact_churn_risk_deciles[risk_decile] >= d ), CALCULATE ( SUM ( fact_churn_risk_deciles[churned] ), REMOVEFILTERS ( fact_churn_risk_deciles ) ) )
+Random Targeting Capture = VAR d = MAX ( fact_churn_risk_deciles[risk_decile] ) RETURN DIVIDE ( CALCULATE ( SUM ( fact_churn_risk_deciles[players] ), REMOVEFILTERS ( fact_churn_risk_deciles ) , fact_churn_risk_deciles[risk_decile] >= d ), CALCULATE ( SUM ( fact_churn_risk_deciles[players] ), REMOVEFILTERS ( fact_churn_risk_deciles ) ) )
+Engagement Band Color = SWITCH ( MIN ( fact_day0_segments[segment_order] ), 1, "#EB6834", 2, "#2A78D6", "#B8B6B0" )
+Wall Level Color = IF ( MAX ( fact_level_funnel[level] ) = CALCULATE ( MAX ( kpi_metrics[value] ), kpi_metrics[metric_key] = "impact.wall_level" ), "#EB6834", "#9DB9DD" )

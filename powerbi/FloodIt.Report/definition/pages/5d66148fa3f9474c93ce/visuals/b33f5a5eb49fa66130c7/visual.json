@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
   "name": "b33f5a5eb49fa66130c7",
   "position": {
     "x": 976,
@@ -27,8 +27,7 @@
                 }
               },
               "queryRef": "fact_churn_feature_importance.feature",
-              "nativeQueryRef": "feature",
-              "active": true
+              "nativeQueryRef": "feature"
             }
           ]
         },
@@ -66,7 +65,8 @@
             },
             "direction": "Descending"
           }
-        ]
+        ],
+        "isDefaultSort": false
       }
     },
     "objects": {

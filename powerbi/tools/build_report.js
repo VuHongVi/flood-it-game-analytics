@@ -162,7 +162,7 @@ function navigator(pageKey, r) {
   return container(hid(pageKey + ':nav'), r, {
     visualType: 'pageNavigator',
     objects: {
-      layout: [{ properties: { orientation: num(0), rowCount: int(3), columnCount: int(3), cellPadding: int(2) } }],
+      layout: [{ properties: { orientation: num(0), rowCount: int(2), columnCount: int(5), cellPadding: int(2) } }],
       shape: [{ properties: { tileShape: str('rectangleRounded'), rectangleRoundedCurve: int(6) } }],
       fill: states.map((s) => ({ properties: { show: bool(true), fillColor: color(s.fill), transparency: num(0) }, selector: { id: s.state } })),
       text: states.map((s) => ({ properties: { fontFamily: str('Segoe UI'), fontSize: num(9), bold: bool(s.bold), fontColor: color(s.txt), topMargin: int(0), bottomMargin: int(0), leftMargin: int(4), rightMargin: int(4) }, selector: { id: s.state } })),
@@ -171,12 +171,12 @@ function navigator(pageKey, r) {
     visualContainerObjects: { background: [{ properties: { show: bool(false) } }], border: [{ properties: { show: bool(false) } }], padding: [{ properties: { top: num(0), bottom: num(0), left: num(0), right: num(0) } }], dropShadow: [{ properties: { show: bool(false) } }], title: [{ properties: { show: bool(false) } }] },
   });
 }
-function kpiCard(key, r, label, measureName, definition) {
+function kpiCard(key, r, label, measureName, definition, valueSize = 34) {
   return container(hid(key), r, {
     visualType: 'cardVisual',
     query: { queryState: { Data: { projections: [measure(measureName)] } } },
     objects: {
-      value: [{ properties: { fontFamily: str('Segoe UI Semibold'), fontSize: num(34), fontColor: color(C.text), labelDisplayUnits: str('1') }, selector: { id: 'default' } }],
+      value: [{ properties: { fontFamily: str('Segoe UI Semibold'), fontSize: num(valueSize), fontColor: color(C.text), labelDisplayUnits: str('1') }, selector: { id: 'default' } }],
       label: [{ properties: { show: bool(false) }, selector: { id: 'default' } }],
       accentBar: [{ properties: { show: bool(true), position: str('Left'), color: color(C.blue), width: num(6) }, selector: { id: 'default' } }],
       outline: [{ properties: { show: bool(false) }, selector: { id: 'default' } }],
@@ -189,9 +189,12 @@ const gridY = { gridlineShow: bool(true), gridlineStyle: str('dotted'), gridline
 
 // ---------------------------------------------------------------- page assembly
 const pages = [];
+const TOTAL_PAGES = 10;
 function page(key, displayName, kicker, title, visualsFn) {
   z = 0;
   const id = hid('page:' + key);
+  // chapter number is derived from the page order, the label after the dot is kept
+  kicker = `${String(pages.length + 1).padStart(2, '0')} / ${String(TOTAL_PAGES).padStart(2, '0')} · ${kicker.split('·').pop().trim()}`;
   const hdr = rect([1, 1, 9, 2]);
   const navR = rect([9, 1, 13, 2]);
   const nav = { ...navR, y: navR.y - 8, height: navR.height + 16 };
@@ -525,7 +528,76 @@ page('ab', 'A/B: observational tests and test design', '08 / 09 · A/B tests', '
   ];
 });
 
-// 9. Data limitations ---------------------------------------------------------
+// 9. What it's worth (opportunity sizing) ---------------------------------------
+page('impact', "What it's worth", "What it's worth", 'Three tests worth running, and what each could be worth', () => {
+  const SEG = 'fact_day0_segments', LV = 'fact_level_funnel', DEC = 'fact_churn_risk_deciles';
+  const cols = [[1, 5], [5, 9], [9, 13]];
+  const cards = (i) => rect([cols[i][0], 2, cols[i][1], 4]);
+  const chart = (i) => rect([cols[i][0], 4, cols[i][1], 10]);
+  const note = (i) => rect([cols[i][0], 10, cols[i][1], 13]);
+  const fieldColor = (m, queryRef) => ({ properties: { fill: { solid: { color: { expr: measure(m).field } } } }, selector: { data: [{ dataViewWildcard: { matchingOption: 1 } }] } });
+  const order = agg(SEG, 'segment_order', 'Min');
+  return [
+    // 1. first minute
+    kpiCard('impact:fm:main', slot(cards(0), 0, 2), 'D7 players gained', 'Impact First Minute Extra D7', 'Per 1,000 installs, if under-1-minute installs retained like the 1-5 min band.'),
+    kpiCard('impact:fm:lift', slot(cards(0), 1, 2), 'Relative D7 lift', 'Impact First Minute D7 Lift', 'Same scenario, as a share of today\'s D7.'),
+    container(hid('impact:fm:chart'), chart(0), {
+      visualType: 'clusteredColumnChart',
+      query: { queryState: { Category: { projections: [column(SEG, 'segment')] }, Y: { projections: [measure('Segment D7 Retention')] }, Tooltips: { projections: [order, measure('Segment Players')] } },
+        sortDefinition: { sort: [{ field: order.field, direction: 'Ascending' }], isDefaultSort: false } },
+      objects: {
+        categoryAxis: [{ properties: { ...axisFont, fontSize: num(12), showAxisTitle: bool(true), titleText: str('Day-0 engagement time') } }],
+        valueAxis: [{ properties: { ...axisFont, ...gridY, showAxisTitle: bool(false), start: num(0) } }],
+        dataPoint: [fieldColor('Engagement Band Color', `${M}.Segment D7 Retention`)],
+        labels: [{ properties: { show: bool(true), fontSize: num(12), color: color(C.text) } }],
+        legend: [{ properties: { show: bool(false) } }],
+      },
+      visualContainerObjects: chrome({ title: '1. Fix the first minute', subtitle: 'D7 retention by minutes played on install day. Orange = band to fix, blue = scenario target.', alt: 'D7 retention by day-0 engagement band, the under-one-minute band highlighted.' }),
+    }, { filterConfig: { filters: [catFilter('impact:fm:dim', SEG, 'dimension', "'Day-0 engagement time'")] } }),
+    ...insight('impact:fm:note', note(0), 'Under-a-minute installs are the largest leak and the cheapest to address. Test a tutorial board on first launch; primary metric = share of installs reaching 1+ minute on day 0, guardrail D7.', 'fact_day0_segments.csv, metrics.json (impact.first_minute_*)'),
+    // 2. difficulty wall
+    kpiCard('impact:wall:main', slot(cards(1), 0, 2), 'More players past the wall', 'Impact Wall Continue per 1000', 'Per 1,000 players who reach it, at the median quit rate of other levels.'),
+    kpiCard('impact:wall:quit', slot(cards(1), 1, 2), 'Quit rate: wall vs median', 'Impact Wall Quit vs Median', 'New players whose last level started is this one.', 24),
+    container(hid('impact:wall:chart'), chart(1), {
+      visualType: 'clusteredColumnChart',
+      query: { queryState: { Category: { projections: [column(LV, 'level')] }, Y: { projections: [measure('Quit Rate')] } },
+        sortDefinition: { sort: [{ field: column(LV, 'level').field, direction: 'Ascending' }], isDefaultSort: false } },
+      objects: {
+        categoryAxis: [{ properties: { ...axisFont, axisType: str('Scalar'), showAxisTitle: bool(true), titleText: str('Level') } }],
+        valueAxis: [{ properties: { ...axisFont, ...gridY, showAxisTitle: bool(false), start: num(0) } }],
+        dataPoint: [fieldColor('Wall Level Color', `${M}.Quit Rate`)],
+        legend: [{ properties: { show: bool(false) } }],
+      },
+      visualContainerObjects: chrome({ title: '2. Rebalance the difficulty wall', subtitle: 'Quit rate by level among new players (level 30 = finished, not shown). Orange = the wall used in the sizing.', alt: 'Quit rate by level with the wall level highlighted.' }),
+    }),
+    ...insight('impact:wall:note', note(1), 'One level holds back far more players than any other. Test an easier board for it; primary metric = share of players passing it, guardrails D7 and rewarded-ad views.', 'fact_level_funnel.csv, metrics.json (impact.wall_*)', C.orange),
+    // 3. churn targeting
+    kpiCard('impact:churn:lift', slot(cards(2), 0, 2), 'Churners found vs random', 'Impact Churn Top 30% Lift', 'Contacting the riskiest 30% of installs scored by the model.'),
+    kpiCard('impact:churn:cap', slot(cards(2), 1, 2), 'Churners in the riskiest 30%', 'Impact Churn Top 30% Capture', 'Share of all churners in the top three risk deciles.'),
+    container(hid('impact:churn:chart'), chart(2), {
+      visualType: 'lineChart',
+      query: { queryState: { Category: { projections: [column(DEC, 'risk_decile')] }, Y: { projections: [measure('Cumulative Churn Capture'), measure('Random Targeting Capture')] } },
+        sortDefinition: { sort: [{ field: column(DEC, 'risk_decile').field, direction: 'Descending' }], isDefaultSort: false } },
+      objects: {
+        categoryAxis: [{ properties: { ...axisFont, axisType: str('Categorical'), showAxisTitle: bool(true), titleText: str('Risk decile, riskiest first (10 = highest predicted churn)') } }],
+        valueAxis: [{ properties: { ...axisFont, ...gridY, showAxisTitle: bool(false), start: num(0), end: num(1) } }],
+        dataPoint: [
+          { properties: { fill: color(C.blue) }, selector: { metadata: `${M}.Cumulative Churn Capture` } },
+          { properties: { fill: color('#9A9893') }, selector: { metadata: `${M}.Random Targeting Capture` } },
+        ],
+        lineStyles: [
+          { properties: { strokeWidth: num(3), showMarker: bool(true), markerSize: num(5) } },
+          { properties: { strokeWidth: num(1), lineStyle: str('dashed'), showMarker: bool(false) }, selector: { metadata: `${M}.Random Targeting Capture` } },
+        ],
+        legend: [{ properties: { show: bool(true), position: str('Top'), fontSize: num(10), labelColor: color(C.muted) } }],
+      },
+      visualContainerObjects: chrome({ title: '3. Target at-risk installs', subtitle: 'Gains curve: share of churners found when contacting installs from the riskiest decile down. Dashed = random.', alt: 'Cumulative gains curve of the churn model against random targeting.' }),
+    }),
+    ...insight('impact:churn:note', note(2), 'The model ranks risk but only modestly beats random. Use it to order a re-engagement push with a holdout group, not to personalise offers.', 'fact_churn_risk_deciles.csv, metrics.json (impact.churn_*)'),
+  ];
+});
+
+// 10. Data limitations ---------------------------------------------------------
 page('limits', 'Data limitations', '09 / 09 · Data limitations', 'What this data can and cannot tell us', () => {
   const items = [
     'Sampled export: exactly 50,000 events per day. Absolute counts describe the sample; rates are reliable.',

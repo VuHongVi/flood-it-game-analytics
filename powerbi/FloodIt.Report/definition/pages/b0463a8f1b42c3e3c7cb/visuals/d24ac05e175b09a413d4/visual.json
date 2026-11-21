@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
   "name": "d24ac05e175b09a413d4",
   "position": {
     "x": 1288,
@@ -27,31 +27,7 @@
                 }
               },
               "queryRef": "fact_ab_power_analysis.mde_abs",
-              "nativeQueryRef": "mde_abs",
-              "active": true
-            }
-          ]
-        },
-        "Tooltips": {
-          "projections": [
-            {
-              "field": {
-                "Aggregation": {
-                  "Expression": {
-                    "Column": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "fact_ab_power_analysis"
-                        }
-                      },
-                      "Property": "days_needed_at_sample_volume"
-                    }
-                  },
-                  "Function": 0
-                }
-              },
-              "queryRef": "Sum(fact_ab_power_analysis.days_needed_at_sample_volume)",
-              "nativeQueryRef": "Sum of days_needed_at_sample_volume"
+              "nativeQueryRef": "mde_abs"
             }
           ]
         },
@@ -75,6 +51,29 @@
               },
               "queryRef": "Sum(fact_ab_power_analysis.n_per_arm)",
               "nativeQueryRef": "Sum of n_per_arm"
+            }
+          ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "fact_ab_power_analysis"
+                        }
+                      },
+                      "Property": "days_needed_at_sample_volume"
+                    }
+                  },
+                  "Function": 0
+                }
+              },
+              "queryRef": "Sum(fact_ab_power_analysis.days_needed_at_sample_volume)",
+              "nativeQueryRef": "Sum of days_needed_at_sample_volume"
             }
           ]
         }
