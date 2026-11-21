@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "FloodIt"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "577695a5-f886-4beb-ab93-48d0cc50ee6c"
+  }
+}

@@ -1,0 +1,48 @@
+table fact_quickplay_boards
+	lineageTag: 43448cf8-0bf5-46a5-8aa8-926e79bf584e
+
+	column board
+		dataType: string
+		lineageTag: e33973d3-b5b0-487d-8f59-b0f8b430a5fe
+		sourceColumn: board
+
+	column starts
+		dataType: int64
+		lineageTag: 13f91970-f454-448b-a498-9f05f102bb81
+		sourceColumn: starts
+
+	column completes
+		dataType: int64
+		lineageTag: ba93425e-68be-4f2b-be73-3120383f8c56
+		sourceColumn: completes
+
+	column fails
+		dataType: int64
+		lineageTag: ff0a8af7-b3fb-41f6-9df2-69c579ca01d4
+		sourceColumn: fails
+
+	column players
+		dataType: int64
+		lineageTag: d7483596-6e85-42b3-977e-71464b3fdeef
+		sourceColumn: players
+
+	column completion_per_attempt
+		dataType: double
+		lineageTag: 6322ca50-55bb-4428-97db-c004fd754948
+		sourceColumn: completion_per_attempt
+
+	column fail_per_attempt
+		dataType: double
+		lineageTag: 2203a9b1-1526-474c-bae6-da125da0e92d
+		sourceColumn: fail_per_attempt
+
+	partition fact_quickplay_boards = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CsvFolder & "fact_quickplay_boards.csv"), [Delimiter=",", Columns=7, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"board", type text}, {"starts", Int64.Type}, {"completes", Int64.Type}, {"fails", Int64.Type}, {"players", Int64.Type}, {"completion_per_attempt", type number}, {"fail_per_attempt", type number}}, "en-US")
+				in
+				    Typed
+

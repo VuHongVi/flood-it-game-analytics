@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "FloodIt"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "e327d2ca-26d3-41af-b50e-d5ed9d1007f5"
+  }
+}

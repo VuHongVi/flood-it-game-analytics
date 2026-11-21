@@ -1,0 +1,33 @@
+table fact_spike_event_mix
+	lineageTag: 490f4e8a-0d8a-418c-a2cf-ec7d5dc01bbe
+
+	column event_name
+		dataType: string
+		lineageTag: b48c2736-1b52-4608-89a3-a96f67301272
+		sourceColumn: event_name
+
+	column avg_events_normal_day
+		dataType: double
+		lineageTag: 714fdbc5-8c4a-4490-b0e9-b3c1b3430cad
+		sourceColumn: avg_events_normal_day
+
+	column avg_events_spike_day
+		dataType: double
+		lineageTag: e4390c4e-5e9f-4910-b51d-3158b452bee0
+		sourceColumn: avg_events_spike_day
+
+	column ratio_spike_vs_normal
+		dataType: double
+		lineageTag: 6bf7c2fc-d93d-4f43-8006-e6aca5eba858
+		sourceColumn: ratio_spike_vs_normal
+
+	partition fact_spike_event_mix = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CsvFolder & "fact_spike_event_mix.csv"), [Delimiter=",", Columns=4, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"event_name", type text}, {"avg_events_normal_day", type number}, {"avg_events_spike_day", type number}, {"ratio_spike_vs_normal", type number}}, "en-US")
+				in
+				    Typed
+

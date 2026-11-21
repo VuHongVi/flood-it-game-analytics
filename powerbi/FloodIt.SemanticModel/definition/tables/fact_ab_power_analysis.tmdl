@@ -1,0 +1,71 @@
+table fact_ab_power_analysis
+	lineageTag: 99c9f8ba-6c13-4da2-9fee-a286621173bd
+
+	column metric
+		dataType: string
+		lineageTag: 4edb75b8-24e8-4551-8408-ccd29150a355
+		sourceColumn: metric
+
+	column baseline
+		dataType: double
+		lineageTag: d0adbded-753e-43f3-b892-b44b215f0357
+		sourceColumn: baseline
+
+	column mde_abs
+		dataType: double
+		formatString: +0.0%
+		lineageTag: aba34f81-18b4-4587-8922-0b717c9c148c
+		sourceColumn: mde_abs
+
+	column mde_relative
+		dataType: double
+		lineageTag: 0cbc7ead-a592-40f3-8d37-5fe32cbae234
+		sourceColumn: mde_relative
+
+	column alpha
+		dataType: double
+		lineageTag: 302e5acb-a375-4a12-96ae-2d8b1b6f555f
+		sourceColumn: alpha
+
+	column power
+		dataType: double
+		lineageTag: 616a8398-b6e1-49db-ac3c-75ed2c9e0673
+		sourceColumn: power
+
+	column n_per_arm
+		dataType: int64
+		formatString: #,0
+		lineageTag: 0aefabc4-0e2f-49e2-aa25-cde5e51047cd
+		sourceColumn: n_per_arm
+
+	column total_n
+		dataType: int64
+		lineageTag: 98277e7e-b111-4387-ad7d-6c8e5dee5062
+		sourceColumn: total_n
+
+	column sample_installs_per_day
+		dataType: double
+		lineageTag: 4fa53cb5-7f94-44cf-adcc-650df8b1a6c7
+		sourceColumn: sample_installs_per_day
+
+	column days_needed_at_sample_volume
+		dataType: int64
+		formatString: #,0
+		lineageTag: b8812acf-66bc-4f86-8352-e93e017dd34d
+		sourceColumn: days_needed_at_sample_volume
+
+	column days_needed_incl_d1_lag
+		dataType: int64
+		lineageTag: 94375d35-e548-4661-a72b-e797ede8b715
+		sourceColumn: days_needed_incl_d1_lag
+
+	partition fact_ab_power_analysis = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CsvFolder & "fact_ab_power_analysis.csv"), [Delimiter=",", Columns=11, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"metric", type text}, {"baseline", type number}, {"mde_abs", type number}, {"mde_relative", type number}, {"alpha", type number}, {"power", type number}, {"n_per_arm", Int64.Type}, {"total_n", Int64.Type}, {"sample_installs_per_day", type number}, {"days_needed_at_sample_volume", Int64.Type}, {"days_needed_incl_d1_lag", Int64.Type}}, "en-US")
+				in
+				    Typed
+

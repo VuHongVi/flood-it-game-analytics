@@ -1,0 +1,335 @@
+/// Home table for every measure in powerbi/measures.dax.
+table _Measures
+	lineageTag: e3d72ca5-11f0-461d-a13c-d062cac344f8
+
+	/// DAU on the current day(s). At day grain = distinct active players.
+	measure DAU = SUM ( fact_daily_activity[dau] )
+		formatString: #,0
+		displayFolder: Growth
+		lineageTag: e8b742ff-fd0e-4297-bebd-6f32596e203c
+
+	/// Mean DAU over the days in context (all 114 days by default).
+	measure 'Avg DAU' = AVERAGE ( fact_daily_activity[dau] )
+		formatString: #,0.0
+		displayFolder: Growth
+		lineageTag: 0aa530fe-ccc8-4d7f-879a-99191c826a52
+
+	/// Mean DAU excluding spike days (tracking/sampling artefacts).
+	measure 'Avg DAU excl Spikes' = CALCULATE ( AVERAGE ( fact_daily_activity[dau] ), fact_daily_activity[is_spike_day] = 0 )
+		formatString: #,0.0
+		displayFolder: Growth
+		lineageTag: 0e04abb6-bdfe-44f8-b058-9c512fa74b77
+
+	measure Installs = SUM ( fact_daily_activity[installs] )
+		formatString: #,0
+		displayFolder: Growth
+		lineageTag: 89712ea7-d005-46ff-9921-4683ea02520a
+
+	measure 'Avg Daily Installs' = AVERAGE ( fact_daily_activity[installs] )
+		formatString: #,0.0
+		displayFolder: Growth
+		lineageTag: 58ff9e8f-0eef-4c33-b70c-b4e65d69579c
+
+	/// Pre-computed distinct count (trailing 7 days) - not additive across days.
+	measure WAU = SUM ( fact_daily_activity[wau] )
+		formatString: #,0
+		displayFolder: Growth
+		lineageTag: 4b72a752-a8c0-48e7-aa75-a639e52d8bc4
+
+	/// Pre-computed distinct count (trailing 30 days) - not additive across days.
+	measure MAU = SUM ( fact_daily_activity[mau] )
+		formatString: #,0
+		displayFolder: Growth
+		lineageTag: 054f8d06-0bde-4696-9d24-a496f0d64251
+
+	/// Stickiness on one day = DAU / MAU, only when a full 30-day window exists.
+	measure Stickiness =
+			IF ( MAX ( fact_daily_activity[full_30d_window] ) = 1,
+			     DIVIDE ( SUM ( fact_daily_activity[dau] ), SUM ( fact_daily_activity[mau] ) ) )
+		formatString: 0.0%
+		displayFolder: Growth
+		lineageTag: 25a2c857-dcde-4d6e-bc5c-2df5d3d04ad1
+
+	/// Headline: mean of daily DAU/MAU over spike-free 30-day windows.
+	measure 'Avg Stickiness Clean' =
+			AVERAGEX (
+			    FILTER ( fact_daily_activity, fact_daily_activity[clean_stickiness_window] = 1 ),
+			    DIVIDE ( fact_daily_activity[dau], fact_daily_activity[mau] ) )
+		formatString: 0.0%
+		displayFolder: Growth
+		lineageTag: 8d306e3a-0bba-452b-9c41-dc7a8c28425a
+
+	measure 'Spike Days' = CALCULATE ( COUNTROWS ( fact_daily_activity ), fact_daily_activity[is_spike_day] = 1 )
+		formatString: #,0
+		displayFolder: Growth
+		lineageTag: c7461e2e-1702-47e9-a8f5-f4ddfc8626ab
+
+	/// Classic Day-N retention with right-censoring: retained / ELIGIBLE (never / all installs).
+	measure Retention = DIVIDE ( SUM ( fact_retention_cohort[retained_users] ), SUM ( fact_retention_cohort[eligible_users] ) )
+		formatString: 0.0%
+		displayFolder: Retention
+		lineageTag: f3ca1bff-be7f-4413-8b32-f224619e98ba
+
+	measure 'Retention D1' = CALCULATE ( [Retention], fact_retention_cohort[day_n] = 1 )
+		formatString: 0.0%
+		displayFolder: Retention
+		lineageTag: 1300ee12-f5fb-4838-837b-de49abb70138
+
+	measure 'Retention D3' = CALCULATE ( [Retention], fact_retention_cohort[day_n] = 3 )
+		formatString: 0.0%
+		displayFolder: Retention
+		lineageTag: d43e1142-4ba5-4c6a-bb37-f4a1a21198e6
+
+	measure 'Retention D7' = CALCULATE ( [Retention], fact_retention_cohort[day_n] = 7 )
+		formatString: 0.0%
+		displayFolder: Retention
+		lineageTag: 1df8bd50-5185-4367-823c-0289dc968cb0
+
+	measure 'Retention D14' = CALCULATE ( [Retention], fact_retention_cohort[day_n] = 14 )
+		formatString: 0.0%
+		displayFolder: Retention
+		lineageTag: 14b3f587-2a4a-4a26-aafc-641bf7984fea
+
+	measure 'Retention D30' = CALCULATE ( [Retention], fact_retention_cohort[day_n] = 30 )
+		formatString: 0.0%
+		displayFolder: Retention
+		lineageTag: 02b84649-9538-430d-8020-acca9281c29b
+
+	/// Cohort size (same for every day_n of a cohort -> take one day_n).
+	measure 'Cohort Installs' = CALCULATE ( SUM ( fact_retention_cohort[cohort_users] ), fact_retention_cohort[day_n] = 1 )
+		formatString: #,0
+		displayFolder: Retention
+		lineageTag: e2adb017-5941-4233-9100-c719e94f3cc1
+
+	measure 'Retention Curve' = DIVIDE ( SUM ( fact_retention_curve[retained_users] ), SUM ( fact_retention_curve[eligible_users] ) )
+		formatString: 0.0%
+		displayFolder: Retention
+		lineageTag: aaa585f5-742a-4bb6-a839-00e447d6eff3
+
+	measure 'Retention CI Low' = MAX ( fact_retention_curve[ci_low] )
+		formatString: 0.0%
+		displayFolder: Retention
+		lineageTag: 79c209ac-a14b-4d45-a00e-d623e847ddd2
+
+	measure 'Retention CI High' = MAX ( fact_retention_curve[ci_high] )
+		formatString: 0.0%
+		displayFolder: Retention
+		lineageTag: 18fc2619-2020-4c0c-8734-4a8dc9516744
+
+	measure 'Retention by Platform' = DIVIDE ( SUM ( fact_retention_platform[retained_users] ), SUM ( fact_retention_platform[eligible_users] ) )
+		formatString: 0.0%
+		displayFolder: Retention
+		lineageTag: 1eebb967-4579-40b2-b4ea-326441535a38
+
+	measure 'Revenue USD' = SUM ( fact_monetization_platform[revenue_usd] )
+		formatString: $#,0.00
+		displayFolder: Monetisation
+		lineageTag: de4ab855-2efa-4525-83cc-3fc90f867e89
+
+	measure 'Active Players' = SUM ( fact_monetization_platform[active_users] )
+		formatString: #,0
+		displayFolder: Monetisation
+		lineageTag: d6b3deec-b29a-472e-8226-4ad0158f270b
+
+	measure 'Player Days' = SUM ( fact_monetization_platform[user_days] )
+		formatString: #,0
+		displayFolder: Monetisation
+		lineageTag: 9aecf01d-5d1e-4745-941b-a8e2e9ee57f6
+
+	measure Payers = SUM ( fact_monetization_platform[payers] )
+		formatString: #,0
+		displayFolder: Monetisation
+		lineageTag: 59c43594-73fd-4df3-9f87-780e1723b013
+
+	measure Purchases = SUM ( fact_monetization_platform[purchases] )
+		formatString: #,0
+		displayFolder: Monetisation
+		lineageTag: daf1938a-c1df-45aa-8094-547da31afc2b
+
+	/// Payer rate = payers / active players
+	measure 'Payer Rate' = DIVIDE ( [Payers], [Active Players] )
+		formatString: 0.00%
+		displayFolder: Monetisation
+		lineageTag: fa3825d8-1ee5-435a-8408-e32e44a44b73
+
+	/// ARPU = revenue / active players (whole window)
+	measure ARPU = DIVIDE ( [Revenue USD], [Active Players] )
+		formatString: $#,0.0000
+		displayFolder: Monetisation
+		lineageTag: a45c940d-53c8-4f3d-aaad-e43e7bfba922
+
+	/// ARPDAU = revenue / player-days (= revenue / sum of daily DAU)
+	measure ARPDAU = DIVIDE ( [Revenue USD], [Player Days] )
+		formatString: $#,0.0000
+		displayFolder: Monetisation
+		lineageTag: e6dced7a-2ddc-4983-8114-613131eb240a
+
+	/// ARPPU = revenue / payers
+	measure ARPPU = DIVIDE ( [Revenue USD], [Payers] )
+		formatString: $#,0.00
+		displayFolder: Monetisation
+		lineageTag: d8ff2179-66cf-4b03-922c-6b525167959e
+
+	/// LTV (fact_ltv_curve, fixed population): cumulative revenue days 0..N / installs observable 30 days
+	measure LTV = DIVIDE ( SUM ( fact_ltv_curve[revenue_usd] ), SUM ( fact_ltv_curve[eligible_users] ) )
+		formatString: $#,0.0000
+		displayFolder: Monetisation
+		lineageTag: f7e96574-a8bf-4d74-bce9-eb32e9aa2a9d
+
+	measure 'LTV D7' = CALCULATE ( [LTV], fact_ltv_curve[day_n] = 7 )
+		formatString: $#,0.0000
+		displayFolder: Monetisation
+		lineageTag: cf0bf0ef-0078-44bb-806d-4f9f571ebc81
+
+	measure 'LTV D30' = CALCULATE ( [LTV], fact_ltv_curve[day_n] = 30 )
+		formatString: $#,0.0000
+		displayFolder: Monetisation
+		lineageTag: 38a5c248-3897-4d18-be12-08a17eff2461
+
+	measure 'IAP Revenue (transactions)' = SUM ( fact_iap_transactions[revenue_usd] )
+		formatString: $#,0.00
+		displayFolder: Monetisation
+		lineageTag: e8817110-a432-46ec-b9db-6cd2b307574b
+
+	measure 'Level Starts' = SUM ( fact_level_funnel[starts] )
+		formatString: #,0
+		displayFolder: Levels
+		lineageTag: 88cca409-6b5e-43d7-8654-b43d9656c795
+
+	/// Difficulty: completion per attempt = completes / starts
+	measure 'Completion per Attempt' = DIVIDE ( SUM ( fact_level_funnel[completes] ), SUM ( fact_level_funnel[starts] ) )
+		formatString: 0.0%
+		displayFolder: Levels
+		lineageTag: 24c1be99-f4dd-4705-9b90-2b2528610f0a
+
+	/// Funnel: players who started the level / players who started level 1
+	measure 'Reach Rate' =
+			DIVIDE ( SUM ( fact_level_funnel[users_started] ),
+			         CALCULATE ( SUM ( fact_level_funnel[users_started] ), REMOVEFILTERS ( fact_level_funnel ), fact_level_funnel[level] = 1 ) )
+		formatString: 0.0%
+		displayFolder: Levels
+		lineageTag: e7a73865-0afb-4fe7-a566-dbed12dfa4a5
+
+	/// Quit rate among NEW players; blank at level 30 (last level = finished, not quit)
+	measure 'Quit Rate' =
+			IF ( MAX ( fact_level_funnel[level] ) = 30, BLANK (),
+			     DIVIDE ( SUM ( fact_level_funnel[new_players_last_level] ), SUM ( fact_level_funnel[new_players_started] ) ) )
+		formatString: 0.0%
+		displayFolder: Levels
+		lineageTag: 07f3c143-974b-4002-bb16-a67068eb7c2a
+
+	measure 'Attempts per Player' = DIVIDE ( SUM ( fact_level_funnel[starts] ), SUM ( fact_level_funnel[users_started] ) )
+		formatString: #,0.00
+		displayFolder: Levels
+		lineageTag: 0bc4977d-6dc8-4851-a995-8eed729da282
+
+	measure 'Quickplay Completion' = DIVIDE ( SUM ( fact_quickplay_boards[completes] ), SUM ( fact_quickplay_boards[starts] ) )
+		formatString: 0.0%
+		displayFolder: Levels
+		lineageTag: 470fb580-2158-4f38-9a41-c443613f67f0
+
+	measure 'Segment Players' = SUM ( fact_day0_segments[players] )
+		formatString: #,0
+		displayFolder: Segments
+		lineageTag: 79af158c-86e5-4af5-840d-6bac6a812124
+
+	measure 'Segment D1 Retention' = DIVIDE ( SUM ( fact_day0_segments[d1_retained] ), SUM ( fact_day0_segments[d1_eligible] ) )
+		formatString: 0.0%
+		displayFolder: Segments
+		lineageTag: bfa0c8b9-c7c3-4530-a0bc-0e6e37eb68f1
+
+	measure 'Segment D7 Retention' = DIVIDE ( SUM ( fact_day0_segments[d7_retained] ), SUM ( fact_day0_segments[d7_eligible] ) )
+		formatString: 0.0%
+		displayFolder: Segments
+		lineageTag: 8c38e4b9-9005-4cad-8109-9794abe53997
+
+	measure 'Segment Churn Rate' = DIVIDE ( SUM ( fact_day0_segments[churned] ), SUM ( fact_day0_segments[churn_eligible] ) )
+		formatString: 0.0%
+		displayFolder: Segments
+		lineageTag: 1ae708c0-e211-4497-85c4-5d56cd1dab74
+
+	measure 'Decile Churn Rate' = DIVIDE ( SUM ( fact_churn_risk_deciles[churned] ), SUM ( fact_churn_risk_deciles[players] ) )
+		formatString: 0.0%
+		displayFolder: Churn model
+		lineageTag: 31008209-aa9c-4545-8b27-dc49cca33220
+
+	measure 'Test AUC' = MAX ( fact_churn_model_performance[test_auc] )
+		formatString: 0.00
+		displayFolder: Churn model
+		lineageTag: d38c0e3e-9e10-448d-83b2-bcfe0fae175d
+
+	measure 'CV AUC' = MAX ( fact_churn_model_performance[cv_auc_mean] )
+		formatString: 0.00
+		displayFolder: Churn model
+		lineageTag: b4b9b4b3-ffbe-438e-95e7-f843ab2ee16f
+
+	measure 'Permutation Importance' = MAX ( fact_churn_feature_importance[permutation_auc_drop] )
+		formatString: 0.000
+		displayFolder: Churn model
+		lineageTag: b3ecf392-b8cb-418f-8625-fc0138a51fd5
+
+	measure 'Churn LR Test AUC' = CALCULATE ( MAX ( kpi_metrics[value] ), kpi_metrics[metric_key] = "churn.lr_test_auc" )
+		formatString: 0.00
+		displayFolder: KPI lookup
+		lineageTag: ec599097-999e-42ca-8b8f-167bfc0cef08
+
+	measure 'Churn Rate' = CALCULATE ( MAX ( kpi_metrics[value] ), kpi_metrics[metric_key] = "churn.churn_rate" )
+		formatString: 0.0%
+		displayFolder: KPI lookup
+		lineageTag: cd26a653-958f-468b-a847-40b885c82f11
+
+	measure 'Players in Window' = CALCULATE ( MAX ( kpi_metrics[value] ), kpi_metrics[metric_key] = "profile.total_users" )
+		formatString: #,0
+		displayFolder: KPI lookup
+		lineageTag: 232486f0-8a9f-4564-9072-f7355f3f97ee
+
+	measure 'AB N per Arm' = CALCULATE ( MAX ( kpi_metrics[value] ), kpi_metrics[metric_key] = "stats.ab_n_per_arm" )
+		formatString: #,0
+		displayFolder: KPI lookup
+		lineageTag: 7fc59487-47ab-4ca5-bfed-3e539657e261
+
+	/// Cumulative payers (days 0..N) in the fixed LTV population.
+	measure 'LTV Payers' = SUM ( fact_ltv_curve[payers] )
+		formatString: #,0
+		displayFolder: Monetisation
+		lineageTag: 11a5e937-c919-40f4-a6ce-438983f52a29
+
+	/// Payers behind LTV D30.
+	measure 'LTV D30 Payers' = CALCULATE ( [LTV Payers], fact_ltv_curve[day_n] = 30 )
+		formatString: #,0
+		displayFolder: Monetisation
+		lineageTag: 950b99ce-279b-4c49-bf23-14ffc023b87a
+
+	/// Share of 30-day IAP LTV already earned on install day.
+	measure 'LTV D0 Share of D30' = DIVIDE ( CALCULATE ( [LTV], fact_ltv_curve[day_n] = 0 ), [LTV D30] )
+		formatString: 0.0%
+		displayFolder: Monetisation
+		lineageTag: 0f17eef5-9dd9-4472-aaee-99199fa19877
+
+	/// ROC true positive rate of the logistic regression at each fpr grid point.
+	measure 'TPR Logistic Regression' = CALCULATE ( MAX ( fact_churn_roc[tpr] ), fact_churn_roc[model] = "logistic_regression" )
+		formatString: 0.00
+		displayFolder: Churn model
+		lineageTag: 45a4a31c-2ca1-4b3f-8cdc-826f9ec1c310
+
+	/// ROC true positive rate of the depth-4 tree at each fpr grid point.
+	measure 'TPR Decision Tree' = CALCULATE ( MAX ( fact_churn_roc[tpr] ), fact_churn_roc[model] = "decision_tree" )
+		formatString: 0.00
+		displayFolder: Churn model
+		lineageTag: 034c8b30-4c0d-41fc-beca-091f4bf43ded
+
+	/// y = x reference: a random model has tpr = fpr.
+	measure 'Random Classifier TPR' = MAX ( fact_churn_roc[fpr] )
+		formatString: 0.00
+		displayFolder: Churn model
+		lineageTag: 11e58d65-fadb-41cb-9e9b-3c81c3bb769c
+
+	column _
+		isHidden
+		isNameInferred
+		sourceColumn: [_]
+
+	partition _Measures = calculated
+		mode: import
+		source = ROW("_", BLANK())
+

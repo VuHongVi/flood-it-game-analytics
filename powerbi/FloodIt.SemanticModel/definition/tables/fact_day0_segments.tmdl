@@ -1,0 +1,78 @@
+table fact_day0_segments
+	lineageTag: c872f5d2-96dd-431e-b4b7-378485c16732
+
+	column dimension
+		dataType: string
+		lineageTag: 1735fd74-f5ba-4ea4-900f-5779a8647a29
+		sourceColumn: dimension
+
+	column segment
+		dataType: string
+		lineageTag: 2e6606ce-5fdf-4e00-896b-2151a417cad9
+		sourceColumn: segment
+
+	column segment_order
+		dataType: int64
+		lineageTag: e118149a-89a2-4a0b-a481-d005586b098f
+		sourceColumn: segment_order
+
+	column players
+		dataType: int64
+		lineageTag: aa918064-1e32-4a15-b799-281797a06b94
+		sourceColumn: players
+
+	column d1_eligible
+		dataType: int64
+		lineageTag: 13dccf49-f82a-4849-9dbb-0e24d9a6d37b
+		sourceColumn: d1_eligible
+
+	column d1_retained
+		dataType: int64
+		lineageTag: fbfa0a29-2c76-48b5-a874-9cec763d6fac
+		sourceColumn: d1_retained
+
+	column d1_retention
+		dataType: double
+		lineageTag: df83fa73-a011-4769-8b9a-4f3451288207
+		sourceColumn: d1_retention
+
+	column d7_eligible
+		dataType: int64
+		lineageTag: b43ed596-3ce6-4c17-955e-d786466916af
+		sourceColumn: d7_eligible
+
+	column d7_retained
+		dataType: int64
+		lineageTag: 9d2b6895-e792-40ff-9f04-1f3cfea75f04
+		sourceColumn: d7_retained
+
+	column d7_retention
+		dataType: double
+		lineageTag: 990a5571-5887-41f2-bb3b-69921617035b
+		sourceColumn: d7_retention
+
+	column churn_eligible
+		dataType: int64
+		lineageTag: dab665f0-19a2-49ff-bf30-db7e43268b7e
+		sourceColumn: churn_eligible
+
+	column churned
+		dataType: int64
+		lineageTag: 57d13106-990a-4c28-af2c-35163a17b719
+		sourceColumn: churned
+
+	column churn_rate
+		dataType: double
+		lineageTag: 4c5086c2-cd5c-4676-9c25-99624cdbe5c1
+		sourceColumn: churn_rate
+
+	partition fact_day0_segments = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CsvFolder & "fact_day0_segments.csv"), [Delimiter=",", Columns=13, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"dimension", type text}, {"segment", type text}, {"segment_order", Int64.Type}, {"players", Int64.Type}, {"d1_eligible", Int64.Type}, {"d1_retained", Int64.Type}, {"d1_retention", type number}, {"d7_eligible", Int64.Type}, {"d7_retained", Int64.Type}, {"d7_retention", type number}, {"churn_eligible", Int64.Type}, {"churned", Int64.Type}, {"churn_rate", type number}}, "en-US")
+				in
+				    Typed
+

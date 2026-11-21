@@ -8,3 +8,7 @@ __pycache__/
 # raw exports are never committed; only aggregated CSVs live in data/
 data/raw/
 *.parquet
+
+# Power BI Desktop local state (per-user, not source)
+**/.pbi/localSettings.json
+**/.pbi/cache.abf

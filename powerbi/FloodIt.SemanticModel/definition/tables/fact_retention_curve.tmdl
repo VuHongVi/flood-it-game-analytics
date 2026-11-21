@@ -1,0 +1,48 @@
+table fact_retention_curve
+	lineageTag: 7c5bf044-41e4-4d0d-85cb-a503953745e1
+
+	column day_n
+		dataType: int64
+		lineageTag: 9ae4a145-2579-49bd-bff1-369939b5c057
+		sourceColumn: day_n
+
+	column cohort_users
+		dataType: int64
+		lineageTag: a26004cb-04d9-492b-b11c-ca8ed8b9d617
+		sourceColumn: cohort_users
+
+	column eligible_users
+		dataType: int64
+		lineageTag: 60dda410-a8a5-4d40-9b14-1db7f0bc6208
+		sourceColumn: eligible_users
+
+	column retained_users
+		dataType: int64
+		lineageTag: 7897fac7-2471-418f-bc1d-3d1201187747
+		sourceColumn: retained_users
+
+	column retention
+		dataType: double
+		lineageTag: 863fd298-20f8-48df-95db-0cc1b795d6cf
+		sourceColumn: retention
+
+	column ci_low
+		dataType: double
+		lineageTag: 0c866d36-d0e5-4b4a-b7c0-7bd9908870c9
+		sourceColumn: ci_low
+
+	column ci_high
+		dataType: double
+		lineageTag: 640a5e4d-8ef7-486b-a753-b1dc8b52bdb0
+		sourceColumn: ci_high
+
+	partition fact_retention_curve = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CsvFolder & "fact_retention_curve.csv"), [Delimiter=",", Columns=7, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"day_n", Int64.Type}, {"cohort_users", Int64.Type}, {"eligible_users", Int64.Type}, {"retained_users", Int64.Type}, {"retention", type number}, {"ci_low", type number}, {"ci_high", type number}}, "en-US")
+				in
+				    Typed
+

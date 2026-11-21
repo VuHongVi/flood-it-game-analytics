@@ -1,0 +1,44 @@
+table fact_retention_cohort
+	lineageTag: ba607a49-8634-47cb-ac07-eedaaf9be7cc
+
+	column cohort_week
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: e97de87a-e9da-4c94-9e2f-dd0f6f02c6cf
+		sourceColumn: cohort_week
+
+	column day_n
+		dataType: int64
+		lineageTag: cfb31b44-3f30-4a6c-9d17-6766d82d352a
+		sourceColumn: day_n
+
+	column cohort_users
+		dataType: int64
+		lineageTag: 105c90c1-6e58-4663-b58b-4c4b90ca2ddd
+		sourceColumn: cohort_users
+
+	column eligible_users
+		dataType: int64
+		lineageTag: 8576590a-fc23-4d82-bde4-586b128fa4ac
+		sourceColumn: eligible_users
+
+	column retained_users
+		dataType: int64
+		lineageTag: cf38d961-0196-47a1-aaf9-4def8646394c
+		sourceColumn: retained_users
+
+	column retention
+		dataType: double
+		lineageTag: 903fadb6-9094-4abb-970f-45734ec008ea
+		sourceColumn: retention
+
+	partition fact_retention_cohort = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CsvFolder & "fact_retention_cohort.csv"), [Delimiter=",", Columns=6, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"cohort_week", type date}, {"day_n", Int64.Type}, {"cohort_users", Int64.Type}, {"eligible_users", Int64.Type}, {"retained_users", Int64.Type}, {"retention", type number}}, "en-US")
+				in
+				    Typed
+

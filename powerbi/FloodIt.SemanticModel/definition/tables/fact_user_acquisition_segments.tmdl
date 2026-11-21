@@ -1,0 +1,28 @@
+table fact_user_acquisition_segments
+	lineageTag: d87dc4c9-211c-4226-bc0f-7ebb88d284f4
+
+	column segment
+		dataType: string
+		lineageTag: 59cd3fcf-71c0-4313-85be-29a2273b6575
+		sourceColumn: segment
+
+	column users
+		dataType: int64
+		lineageTag: ace44437-de32-4305-b9e1-2230870bd46b
+		sourceColumn: users
+
+	column share
+		dataType: double
+		lineageTag: d451d27b-488a-41b8-97f6-cfa7247f73a5
+		sourceColumn: share
+
+	partition fact_user_acquisition_segments = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CsvFolder & "fact_user_acquisition_segments.csv"), [Delimiter=",", Columns=3, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"segment", type text}, {"users", Int64.Type}, {"share", type number}}, "en-US")
+				in
+				    Typed
+

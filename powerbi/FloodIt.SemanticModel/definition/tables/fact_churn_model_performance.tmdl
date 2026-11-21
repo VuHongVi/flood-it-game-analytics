@@ -1,0 +1,48 @@
+table fact_churn_model_performance
+	lineageTag: 9650fa86-eefe-4076-9c4d-80e83161befc
+
+	column model
+		dataType: string
+		lineageTag: 46cb014b-c090-4e50-b30f-15785480ae89
+		sourceColumn: model
+
+	column cv_auc_mean
+		dataType: double
+		lineageTag: b917d5ea-0d65-4a31-af38-f744d82c535c
+		sourceColumn: cv_auc_mean
+
+	column cv_auc_std
+		dataType: double
+		lineageTag: 439da2a2-968d-41d2-b079-a16c9d8cabde
+		sourceColumn: cv_auc_std
+
+	column test_auc
+		dataType: double
+		lineageTag: f0824e83-7d36-469d-bcd2-1222d2bb4516
+		sourceColumn: test_auc
+
+	column train_n
+		dataType: int64
+		lineageTag: d60d5e87-8c0e-4605-8b06-fd826107ca34
+		sourceColumn: train_n
+
+	column test_n
+		dataType: int64
+		lineageTag: 88dd00a4-d898-4562-b903-a03c0dfec2bd
+		sourceColumn: test_n
+
+	column test_churn_rate
+		dataType: double
+		lineageTag: b344a6f7-439a-40f6-bdfb-9b13b6afac36
+		sourceColumn: test_churn_rate
+
+	partition fact_churn_model_performance = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CsvFolder & "fact_churn_model_performance.csv"), [Delimiter=",", Columns=7, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"model", type text}, {"cv_auc_mean", type number}, {"cv_auc_std", type number}, {"test_auc", type number}, {"train_n", Int64.Type}, {"test_n", Int64.Type}, {"test_churn_rate", type number}}, "en-US")
+				in
+				    Typed
+

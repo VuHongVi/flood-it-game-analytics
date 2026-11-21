@@ -1,0 +1,44 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	valueFilterBehavior: independent
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_ProTooling = ["DevMode","MCP-PBIModeling"]
+
+annotation PBI_QueryOrder = ["fact_daily_activity","dim_date","dim_platform","fact_retention_cohort","fact_retention_curve","fact_retention_platform","fact_monetization_platform","fact_iap_transactions","fact_ltv_curve","fact_level_funnel","fact_quickplay_boards","fact_level_anomalies","fact_day0_segments","fact_payer_profile","fact_churn_model_performance","fact_churn_feature_importance","fact_churn_roc","fact_churn_risk_deciles","fact_ab_observational_tests","fact_ab_power_analysis","fact_event_catalog","fact_user_acquisition_segments","fact_traffic_source_platform","fact_spike_event_mix","kpi_metrics","CsvFolder"]
+
+ref table fact_daily_activity
+ref table dim_date
+ref table dim_platform
+ref table fact_retention_cohort
+ref table fact_retention_curve
+ref table fact_retention_platform
+ref table fact_monetization_platform
+ref table fact_iap_transactions
+ref table fact_ltv_curve
+ref table fact_level_funnel
+ref table fact_quickplay_boards
+ref table fact_level_anomalies
+ref table fact_day0_segments
+ref table fact_payer_profile
+ref table fact_churn_model_performance
+ref table fact_churn_feature_importance
+ref table fact_churn_roc
+ref table fact_churn_risk_deciles
+ref table fact_ab_observational_tests
+ref table fact_ab_power_analysis
+ref table fact_event_catalog
+ref table fact_user_acquisition_segments
+ref table fact_traffic_source_platform
+ref table fact_spike_event_mix
+ref table kpi_metrics
+ref table _Measures
+
+ref cultureInfo en-US
+

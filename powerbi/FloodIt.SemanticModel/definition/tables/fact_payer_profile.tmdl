@@ -1,0 +1,53 @@
+table fact_payer_profile
+	lineageTag: e343c058-3d2c-4c06-be01-8c5d3d15fcc0
+
+	column segment
+		dataType: string
+		lineageTag: e78fcf6a-5333-4c89-bce3-527e9dd3b346
+		sourceColumn: segment
+
+	column players
+		dataType: int64
+		lineageTag: d9a00401-4321-4cb0-9fc4-b3614dbf5f36
+		sourceColumn: players
+
+	column median_active_days
+		dataType: int64
+		lineageTag: 955a9220-5772-4a4f-8e0b-3c57bd61eb6d
+		sourceColumn: median_active_days
+
+	column median_sessions
+		dataType: int64
+		lineageTag: 91e59b95-4f8f-4647-a70d-5f89213dcf4e
+		sourceColumn: median_sessions
+
+	column median_engagement_min
+		dataType: double
+		lineageTag: 7a7d1978-1202-4962-b16e-473e32dbe2bd
+		sourceColumn: median_engagement_min
+
+	column median_level_starts
+		dataType: int64
+		lineageTag: 7182c897-dc25-4c3a-ac5b-6c4d639148c8
+		sourceColumn: median_level_starts
+
+	column median_quickplay_starts
+		dataType: int64
+		lineageTag: 62c0ba55-a6b2-485f-b5f6-772c69db4949
+		sourceColumn: median_quickplay_starts
+
+	column share_watched_rewarded_ad
+		dataType: double
+		lineageTag: 4d197f7c-6c06-4087-8aef-f62445ec9842
+		sourceColumn: share_watched_rewarded_ad
+
+	partition fact_payer_profile = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CsvFolder & "fact_payer_profile.csv"), [Delimiter=",", Columns=8, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"segment", type text}, {"players", Int64.Type}, {"median_active_days", Int64.Type}, {"median_sessions", Int64.Type}, {"median_engagement_min", type number}, {"median_level_starts", Int64.Type}, {"median_quickplay_starts", Int64.Type}, {"share_watched_rewarded_ad", type number}}, "en-US")
+				in
+				    Typed
+

@@ -1,0 +1,43 @@
+table fact_monetization_platform
+	lineageTag: 5e076fa3-a098-4c36-8336-9b62061e024f
+
+	column platform
+		dataType: string
+		lineageTag: 6bcc6c31-5b65-423f-b554-50039366688e
+		sourceColumn: platform
+
+	column active_users
+		dataType: int64
+		lineageTag: 9fadafdd-c771-4cea-85f5-fb8c6fda99a0
+		sourceColumn: active_users
+
+	column user_days
+		dataType: int64
+		lineageTag: 0025016f-362e-4772-9f22-e6eeea6563a8
+		sourceColumn: user_days
+
+	column payers
+		dataType: int64
+		lineageTag: 780086a9-050f-4776-b2ba-2ae68c804032
+		sourceColumn: payers
+
+	column purchases
+		dataType: int64
+		lineageTag: b17d583d-66ce-4a94-a18b-dfe42dd7ed3f
+		sourceColumn: purchases
+
+	column revenue_usd
+		dataType: double
+		lineageTag: 04ba340d-042d-4cbe-beee-3e5820a493f0
+		sourceColumn: revenue_usd
+
+	partition fact_monetization_platform = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CsvFolder & "fact_monetization_platform.csv"), [Delimiter=",", Columns=6, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"platform", type text}, {"active_users", Int64.Type}, {"user_days", Int64.Type}, {"payers", Int64.Type}, {"purchases", Int64.Type}, {"revenue_usd", type number}}, "en-US")
+				in
+				    Typed
+
