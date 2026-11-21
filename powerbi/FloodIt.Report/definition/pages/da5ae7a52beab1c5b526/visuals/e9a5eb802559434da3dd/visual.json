@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "e9a5eb802559434da3dd",
   "position": {
     "x": 32,
@@ -27,7 +27,8 @@
                 }
               },
               "queryRef": "dim_platform.platform",
-              "nativeQueryRef": "platform"
+              "nativeQueryRef": "platform",
+              "active": true
             }
           ]
         },
@@ -65,8 +66,7 @@
             },
             "direction": "Descending"
           }
-        ],
-        "isDefaultSort": false
+        ]
       }
     },
     "objects": {
