@@ -1,0 +1,84 @@
+table fact_daily_activity
+	lineageTag: 2d2bd681-d8f6-4eed-a68d-870246659922
+
+	column date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 002c7484-1aa1-47a8-b769-22bef31a6028
+		sourceColumn: date
+
+	column dau
+		dataType: int64
+		lineageTag: 4c4c275b-2892-410d-b529-200ab4c8bdeb
+		sourceColumn: dau
+
+	column installs
+		dataType: int64
+		lineageTag: 406eb421-672c-4dd5-a93b-77028368c875
+		sourceColumn: installs
+
+	column first_seen_users
+		dataType: int64
+		lineageTag: 1578af26-1299-4834-826e-85718f8cacc6
+		sourceColumn: first_seen_users
+
+	column returning_dau
+		dataType: int64
+		lineageTag: 95a9c679-f915-43da-b53c-4e50acbdc9ba
+		sourceColumn: returning_dau
+
+	column wau
+		dataType: int64
+		lineageTag: c6af2d66-b443-4d8f-b242-57b2c1bed6e4
+		sourceColumn: wau
+
+	column mau
+		dataType: int64
+		lineageTag: a879f805-64f9-4520-92f9-722cb909f7e3
+		sourceColumn: mau
+
+	column events
+		dataType: int64
+		lineageTag: 2ccf9a12-ccf9-41d2-9ddc-c4d4a3d58508
+		sourceColumn: events
+
+	column events_per_dau
+		dataType: double
+		lineageTag: 7514e35b-6a32-4e90-b64e-3ca060ebfbd9
+		sourceColumn: events_per_dau
+
+	column is_spike_day
+		dataType: int64
+		lineageTag: 7adfecf9-63f0-4d39-939d-62d2e1063208
+		sourceColumn: is_spike_day
+
+	column full_7d_window
+		dataType: int64
+		lineageTag: 85100f2b-5c73-4d50-9e7e-3f614cc4890f
+		sourceColumn: full_7d_window
+
+	column full_30d_window
+		dataType: int64
+		lineageTag: 8803b700-fb1f-4c25-9d47-118edeb5b7a1
+		sourceColumn: full_30d_window
+
+	column clean_stickiness_window
+		dataType: int64
+		lineageTag: 8c226981-1346-46a8-a9fa-4ca56ed87a4e
+		sourceColumn: clean_stickiness_window
+
+	column stickiness
+		dataType: double
+		lineageTag: 889417ee-d5be-4832-9a77-38a3f19f4a80
+		sourceColumn: stickiness
+
+	partition fact_daily_activity = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CsvFolder & "fact_daily_activity.csv"), [Delimiter=",", Columns=14, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"date", type date}, {"dau", Int64.Type}, {"installs", Int64.Type}, {"first_seen_users", Int64.Type}, {"returning_dau", Int64.Type}, {"wau", Int64.Type}, {"mau", Int64.Type}, {"events", Int64.Type}, {"events_per_dau", type number}, {"is_spike_day", Int64.Type}, {"full_7d_window", Int64.Type}, {"full_30d_window", Int64.Type}, {"clean_stickiness_window", Int64.Type}, {"stickiness", type number}}, "en-US")
+				in
+				    Typed
+

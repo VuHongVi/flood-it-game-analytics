@@ -1,0 +1,38 @@
+table fact_churn_risk_deciles
+	lineageTag: 4a8611aa-4db4-4fa9-851b-f5b6a53acb44
+
+	column risk_decile
+		dataType: int64
+		lineageTag: 6de59b23-7cc2-41c4-a3ee-ba0bccc7b586
+		sourceColumn: risk_decile
+
+	column players
+		dataType: int64
+		lineageTag: 9e219bf3-2bd5-47d1-9c40-0afe60c73fcc
+		sourceColumn: players
+
+	column churned
+		dataType: int64
+		lineageTag: 380bfa49-d0c0-4837-a0bd-8eab64f04867
+		sourceColumn: churned
+
+	column churn_rate
+		dataType: double
+		lineageTag: ba230a91-7f5e-47db-9ccd-b0af4aac516b
+		sourceColumn: churn_rate
+
+	column avg_predicted
+		dataType: double
+		lineageTag: b88d1bb2-f41f-43d3-b89c-870af498b79a
+		sourceColumn: avg_predicted
+
+	partition fact_churn_risk_deciles = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CsvFolder & "fact_churn_risk_deciles.csv"), [Delimiter=",", Columns=5, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"risk_decile", Int64.Type}, {"players", Int64.Type}, {"churned", Int64.Type}, {"churn_rate", type number}, {"avg_predicted", type number}}, "en-US")
+				in
+				    Typed
+

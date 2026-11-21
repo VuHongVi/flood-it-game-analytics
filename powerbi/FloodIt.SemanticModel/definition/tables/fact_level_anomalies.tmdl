@@ -1,0 +1,58 @@
+table fact_level_anomalies
+	lineageTag: 09c8e565-8253-49ba-9b56-12dee60e50cf
+
+	column level
+		dataType: double
+		lineageTag: 2149b12e-f03f-4678-a72b-5d0bafbcb960
+		sourceColumn: level
+
+	column starts
+		dataType: int64
+		lineageTag: 7a7b2519-e6aa-4c4d-9e20-9d43131d703d
+		sourceColumn: starts
+
+	column completes
+		dataType: int64
+		lineageTag: 81e591ce-7d6a-402c-a374-643a096aea9c
+		sourceColumn: completes
+
+	column fails
+		dataType: int64
+		lineageTag: b3cf89b0-ee48-46e9-abbf-d404e3d7b43c
+		sourceColumn: fails
+
+	column retries
+		dataType: int64
+		lineageTag: 565e190c-0558-45fe-884a-95688a6dc633
+		sourceColumn: retries
+
+	column resets
+		dataType: int64
+		lineageTag: ccbdf696-ca69-4c58-b448-2d87bb0f45e5
+		sourceColumn: resets
+
+	column users_started
+		dataType: int64
+		lineageTag: 6def8252-2f06-49ad-a666-fa948ffb8e25
+		sourceColumn: users_started
+
+	column users_completed
+		dataType: int64
+		lineageTag: ab4e2730-9f15-4350-8f17-516f32391004
+		sourceColumn: users_completed
+
+	column users_failed
+		dataType: int64
+		lineageTag: 09f6884a-74dd-418f-9453-fe30cccf14df
+		sourceColumn: users_failed
+
+	partition fact_level_anomalies = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CsvFolder & "fact_level_anomalies.csv"), [Delimiter=",", Columns=9, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"level", type number}, {"starts", Int64.Type}, {"completes", Int64.Type}, {"fails", Int64.Type}, {"retries", Int64.Type}, {"resets", Int64.Type}, {"users_started", Int64.Type}, {"users_completed", Int64.Type}, {"users_failed", Int64.Type}}, "en-US")
+				in
+				    Typed
+

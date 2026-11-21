@@ -1,0 +1,275 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "name": "506abe9ed9a44c8fdd8d",
+  "position": {
+    "x": 40,
+    "y": 120,
+    "z": 4000,
+    "height": 928,
+    "width": 1848,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Sampled export: exactly 50,000 events per day. Absolute counts describe the sample; rates are reliable.",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "22pt",
+                      "color": "#0B0B0B"
+                    }
+                  }
+                ],
+                "listType": "bullet",
+                "indent": 1
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": " ",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "12pt",
+                      "color": "#0B0B0B"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "60% of players were acquired before the window; cohorts and LTV use installs inside it only.",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "22pt",
+                      "color": "#0B0B0B"
+                    }
+                  }
+                ],
+                "listType": "bullet",
+                "indent": 1
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": " ",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "12pt",
+                      "color": "#0B0B0B"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "29% of new players have no first_open and are excluded from cohorts.",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "22pt",
+                      "color": "#0B0B0B"
+                    }
+                  }
+                ],
+                "listType": "bullet",
+                "indent": 1
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": " ",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "12pt",
+                      "color": "#0B0B0B"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Only 27 purchases and no ad revenue: monetisation figures are directional.",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "22pt",
+                      "color": "#0B0B0B"
+                    }
+                  }
+                ],
+                "listType": "bullet",
+                "indent": 1
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": " ",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "12pt",
+                      "color": "#0B0B0B"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Traffic source is confounded with platform (iOS is (direct) only); app_remove exists only on Android and is not used as a churn label.",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "22pt",
+                      "color": "#0B0B0B"
+                    }
+                  }
+                ],
+                "listType": "bullet",
+                "indent": 1
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": " ",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "12pt",
+                      "color": "#0B0B0B"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Platform and source comparisons are observational, not causal.",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "22pt",
+                      "color": "#0B0B0B"
+                    }
+                  }
+                ],
+                "listType": "bullet",
+                "indent": 1
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "border": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "padding": [
+        {
+          "properties": {
+            "top": {
+              "expr": {
+                "Literal": {
+                  "Value": "14D"
+                }
+              }
+            },
+            "bottom": {
+              "expr": {
+                "Literal": {
+                  "Value": "14D"
+                }
+              }
+            },
+            "left": {
+              "expr": {
+                "Literal": {
+                  "Value": "18D"
+                }
+              }
+            },
+            "right": {
+              "expr": {
+                "Literal": {
+                  "Value": "18D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "dropShadow": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Data limitations'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

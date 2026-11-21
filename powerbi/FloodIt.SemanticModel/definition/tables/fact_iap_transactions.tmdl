@@ -1,0 +1,59 @@
+table fact_iap_transactions
+	lineageTag: 439cddd7-dc62-4f20-ac23-27048d5655ab
+
+	column purchase_date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 3bfc8dd3-8b2c-4067-aba0-de38a66bbc7d
+		sourceColumn: purchase_date
+
+	column user_id
+		dataType: string
+		lineageTag: 8474c07c-10a9-446c-b604-f8228959b27b
+		sourceColumn: user_id
+
+	column platform
+		dataType: string
+		lineageTag: e35b2d25-1d24-4925-8272-333181522f96
+		sourceColumn: platform
+
+	column product_id
+		dataType: string
+		lineageTag: 11b8c613-eccc-4be7-b321-c795d37c1bef
+		sourceColumn: product_id
+
+	column currency
+		dataType: string
+		lineageTag: 74f3d9d0-99fd-4a75-8d6e-5cff86bf9c72
+		sourceColumn: currency
+
+	column local_value_micros
+		dataType: int64
+		lineageTag: d1165e18-f18f-425a-9e00-9a6af2ccd107
+		sourceColumn: local_value_micros
+
+	column event_value_in_usd
+		dataType: double
+		lineageTag: 4043fca8-104c-45ed-a450-b34b76e095ed
+		sourceColumn: event_value_in_usd
+
+	column revenue_usd
+		dataType: double
+		lineageTag: fbbf3360-4062-4d64-ae74-8b15c8f5e54e
+		sourceColumn: revenue_usd
+
+	column revenue_source
+		dataType: string
+		lineageTag: c26a8600-5b34-4c61-8383-20915a57a541
+		sourceColumn: revenue_source
+
+	partition fact_iap_transactions = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CsvFolder & "fact_iap_transactions.csv"), [Delimiter=",", Columns=9, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"purchase_date", type date}, {"user_id", type text}, {"platform", type text}, {"product_id", type text}, {"currency", type text}, {"local_value_micros", Int64.Type}, {"event_value_in_usd", type number}, {"revenue_usd", type number}, {"revenue_source", type text}}, "en-US")
+				in
+				    Typed
+

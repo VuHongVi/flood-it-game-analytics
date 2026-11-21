@@ -1,0 +1,53 @@
+table fact_event_catalog
+	lineageTag: aec7b25f-7453-484b-bf31-517846d98817
+
+	column event_name
+		dataType: string
+		lineageTag: 2611e94a-2450-46b9-9853-9676221ab356
+		sourceColumn: event_name
+
+	column events_android
+		dataType: int64
+		lineageTag: bcee1fbd-8434-4214-a911-1a2b24e683a6
+		sourceColumn: events_android
+
+	column events_ios
+		dataType: int64
+		lineageTag: 74c950b4-0582-485c-bb32-45104a30770a
+		sourceColumn: events_ios
+
+	column users_android
+		dataType: int64
+		lineageTag: 19be66a4-729c-44fd-8061-c702eaade076
+		sourceColumn: users_android
+
+	column users_ios
+		dataType: int64
+		lineageTag: 53825bce-8f4e-4c9b-a2c3-4b669e6c0ca6
+		sourceColumn: users_ios
+
+	column events_total
+		dataType: int64
+		lineageTag: eb697316-462d-4a51-9a59-662e29a2ce7a
+		sourceColumn: events_total
+
+	column share_of_events
+		dataType: double
+		lineageTag: 77fa4fc9-8e5e-45c6-8585-a808d575c2b7
+		sourceColumn: share_of_events
+
+	column platform_coverage
+		dataType: string
+		lineageTag: f433a25c-0aff-48cc-a7bf-f1e5d82aa06c
+		sourceColumn: platform_coverage
+
+	partition fact_event_catalog = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CsvFolder & "fact_event_catalog.csv"), [Delimiter=",", Columns=8, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"event_name", type text}, {"events_android", Int64.Type}, {"events_ios", Int64.Type}, {"users_android", Int64.Type}, {"users_ios", Int64.Type}, {"events_total", Int64.Type}, {"share_of_events", type number}, {"platform_coverage", type text}}, "en-US")
+				in
+				    Typed
+

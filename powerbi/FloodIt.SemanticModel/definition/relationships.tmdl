@@ -1,0 +1,20 @@
+relationship fact_daily_activity_date_dim_date_date
+	fromColumn: fact_daily_activity.date
+	toColumn: dim_date.date
+
+relationship fact_iap_transactions_purchase_date_dim_date_date
+	fromColumn: fact_iap_transactions.purchase_date
+	toColumn: dim_date.date
+
+relationship fact_monetization_platform_platform_dim_platform_platform
+	fromColumn: fact_monetization_platform.platform
+	toColumn: dim_platform.platform
+
+relationship fact_retention_platform_platform_dim_platform_platform
+	fromColumn: fact_retention_platform.platform
+	toColumn: dim_platform.platform
+
+relationship fact_iap_transactions_platform_dim_platform_platform
+	fromColumn: fact_iap_transactions.platform
+	toColumn: dim_platform.platform
+

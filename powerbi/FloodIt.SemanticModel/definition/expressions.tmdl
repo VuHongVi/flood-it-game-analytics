@@ -1,0 +1,6 @@
+/// Local folder with the Flood-It CSV tables (git clone of the repo). Change this one value if the repo moves.
+expression CsvFolder = "D:\Vi\DA_Game\flood-it-game-analytics\powerbi\data\" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: fa43c956-b076-431d-8fd2-900fa7cd57af
+
+	annotation PBI_ResultType = Text
+

@@ -1,0 +1,38 @@
+table fact_ltv_curve
+	lineageTag: e0b66709-2d7f-4e35-bf8e-cd9d3789c644
+
+	column day_n
+		dataType: int64
+		lineageTag: 23d9b3c5-853f-4383-8b78-8900df6cb376
+		sourceColumn: day_n
+
+	column eligible_users
+		dataType: int64
+		lineageTag: 39e0586e-3c61-4e39-997f-7f79a72a715f
+		sourceColumn: eligible_users
+
+	column payers
+		dataType: int64
+		lineageTag: 36850c69-cfae-4703-9d86-3ea03b6207cf
+		sourceColumn: payers
+
+	column revenue_usd
+		dataType: double
+		lineageTag: a892cd92-2215-4c3e-9f33-810f4475a5d6
+		sourceColumn: revenue_usd
+
+	column ltv_usd
+		dataType: double
+		lineageTag: ed89c7c5-e648-4dae-b068-a33c39fff4bd
+		sourceColumn: ltv_usd
+
+	partition fact_ltv_curve = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CsvFolder & "fact_ltv_curve.csv"), [Delimiter=",", Columns=5, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"day_n", Int64.Type}, {"eligible_users", Int64.Type}, {"payers", Int64.Type}, {"revenue_usd", type number}, {"ltv_usd", type number}}, "en-US")
+				in
+				    Typed
+

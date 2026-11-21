@@ -1,0 +1,28 @@
+table fact_traffic_source_platform
+	lineageTag: 266bb2eb-8c02-4325-9404-8a983d96366d
+
+	column platform
+		dataType: string
+		lineageTag: e164c0eb-2e6d-41cf-ac04-19f3504bf248
+		sourceColumn: platform
+
+	column traffic_source
+		dataType: string
+		lineageTag: fb5b8f86-1b69-400f-839f-fbd0e234405d
+		sourceColumn: traffic_source
+
+	column users
+		dataType: int64
+		lineageTag: bc3df371-4bf0-4c11-9ef9-9a908c43691b
+		sourceColumn: users
+
+	partition fact_traffic_source_platform = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CsvFolder & "fact_traffic_source_platform.csv"), [Delimiter=",", Columns=3, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"platform", type text}, {"traffic_source", type text}, {"users", Int64.Type}}, "en-US")
+				in
+				    Typed
+

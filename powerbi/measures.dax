@@ -62,6 +62,10 @@ LTV = DIVIDE ( SUM ( fact_ltv_curve[revenue_usd] ), SUM ( fact_ltv_curve[eligibl
 LTV D7  = CALCULATE ( [LTV], fact_ltv_curve[day_n] = 7 )
 LTV D30 = CALCULATE ( [LTV], fact_ltv_curve[day_n] = 30 )
 IAP Revenue (transactions) = SUM ( fact_iap_transactions[revenue_usd] )
+// LTV storytelling: how fast the 30-day IAP LTV is earned, and by how few payers
+LTV Payers = SUM ( fact_ltv_curve[payers] )
+LTV D30 Payers = CALCULATE ( [LTV Payers], fact_ltv_curve[day_n] = 30 )
+LTV D0 Share of D30 = DIVIDE ( CALCULATE ( [LTV], fact_ltv_curve[day_n] = 0 ), [LTV D30] )
 
 // ---------- Levels (fact_level_funnel, one row per level 1..30) ----------
 Level Starts = SUM ( fact_level_funnel[starts] )
@@ -89,6 +93,10 @@ Decile Churn Rate = DIVIDE ( SUM ( fact_churn_risk_deciles[churned] ), SUM ( fac
 Test AUC = MAX ( fact_churn_model_performance[test_auc] )
 CV AUC = MAX ( fact_churn_model_performance[cv_auc_mean] )
 Permutation Importance = MAX ( fact_churn_feature_importance[permutation_auc_drop] )
+// ROC curve as three series on one fpr axis (lets the y = x reference sit next to both models)
+TPR Logistic Regression = CALCULATE ( MAX ( fact_churn_roc[tpr] ), fact_churn_roc[model] = "logistic_regression" )
+TPR Decision Tree = CALCULATE ( MAX ( fact_churn_roc[tpr] ), fact_churn_roc[model] = "decision_tree" )
+Random Classifier TPR = MAX ( fact_churn_roc[fpr] )
 
 // ---------- KPI lookup (any scalar of results/metrics.json) ----------
 // Used for cards whose value is a model or test statistic, e.g. KPI("churn.lr_test_auc").

@@ -1,0 +1,120 @@
+table fact_ab_observational_tests
+	lineageTag: 97118a97-f4cd-4190-9ca1-8253745ad889
+
+	column comparison
+		dataType: string
+		lineageTag: 66fa0cd5-8125-4caf-af81-f1f97f6a58b5
+		sourceColumn: comparison
+
+	column metric
+		dataType: string
+		lineageTag: 3436b046-254a-4732-851b-1cec28678464
+		sourceColumn: metric
+
+	column group_a
+		dataType: string
+		lineageTag: 9e20b6f0-d064-40a0-806f-1d340d5786d8
+		sourceColumn: group_a
+
+	column group_b
+		dataType: string
+		lineageTag: 2322d21f-889d-4f3d-a6f5-956251bc6454
+		sourceColumn: group_b
+
+	column n_a
+		dataType: int64
+		lineageTag: 722bb8a4-254d-43e7-9c6c-9bc83b4aba86
+		sourceColumn: n_a
+
+	column x_a
+		dataType: int64
+		lineageTag: 46092965-835b-42b8-87cb-a41e26de1773
+		sourceColumn: x_a
+
+	column rate_a
+		dataType: double
+		formatString: 0.0%
+		lineageTag: 11f61196-ec78-49f7-a1f3-c15d6a61b461
+		sourceColumn: rate_a
+
+	column n_b
+		dataType: int64
+		lineageTag: 8a0c5e1e-94c4-4d11-8ae1-4a4d22da3843
+		sourceColumn: n_b
+
+	column x_b
+		dataType: int64
+		lineageTag: d218fe98-9e15-4226-8377-ff4f2512ea7f
+		sourceColumn: x_b
+
+	column rate_b
+		dataType: double
+		formatString: 0.0%
+		lineageTag: abfb6a1e-891f-43d6-b7f3-1c27a849ba67
+		sourceColumn: rate_b
+
+	column diff_a_minus_b
+		dataType: double
+		formatString: +0.0%;-0.0%;0.0%
+		lineageTag: 173749a8-c63b-42ce-aa4b-0c792b795352
+		sourceColumn: diff_a_minus_b
+
+	column diff_ci_low
+		dataType: double
+		formatString: +0.0%;-0.0%;0.0%
+		lineageTag: 1371cd91-f274-4f2e-82d2-6aceb94e9865
+		sourceColumn: diff_ci_low
+
+	column diff_ci_high
+		dataType: double
+		formatString: +0.0%;-0.0%;0.0%
+		lineageTag: 38c62356-798b-4a1b-8700-939f2f968703
+		sourceColumn: diff_ci_high
+
+	column z
+		dataType: double
+		lineageTag: 936c3b16-fe1e-470b-ad1a-766ce48f4c0e
+		sourceColumn: z
+
+	column p_value
+		dataType: double
+		formatString: 0.0000
+		lineageTag: 1a78b8b8-a1a2-482f-b87c-ca7b8a22e3eb
+		sourceColumn: p_value
+
+	column chi2
+		dataType: double
+		lineageTag: 8dde60d0-9278-4e3a-94ff-8ae9e80da187
+		sourceColumn: chi2
+
+	column chi2_p_value
+		dataType: double
+		lineageTag: 5a7f37b1-52e2-485d-af18-9f6272fa8f30
+		sourceColumn: chi2_p_value
+
+	column cohens_h
+		dataType: double
+		formatString: 0.00
+		lineageTag: 0f18856d-a9c2-4e9c-9879-8e983f3b7516
+		sourceColumn: cohens_h
+
+	column relative_lift
+		dataType: double
+		lineageTag: 711810b5-dae3-47e4-acec-3abd01cffa98
+		sourceColumn: relative_lift
+
+	column note
+		dataType: string
+		lineageTag: 1c71e94e-10ef-46b8-9c83-dc0009c93757
+		sourceColumn: note
+
+	partition fact_ab_observational_tests = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CsvFolder & "fact_ab_observational_tests.csv"), [Delimiter=",", Columns=20, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"comparison", type text}, {"metric", type text}, {"group_a", type text}, {"group_b", type text}, {"n_a", Int64.Type}, {"x_a", Int64.Type}, {"rate_a", type number}, {"n_b", Int64.Type}, {"x_b", Int64.Type}, {"rate_b", type number}, {"diff_a_minus_b", type number}, {"diff_ci_low", type number}, {"diff_ci_high", type number}, {"z", type number}, {"p_value", type number}, {"chi2", type number}, {"chi2_p_value", type number}, {"cohens_h", type number}, {"relative_lift", type number}, {"note", type text}}, "en-US")
+				in
+				    Typed
+
