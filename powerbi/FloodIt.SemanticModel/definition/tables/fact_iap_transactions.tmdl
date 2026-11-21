@@ -5,7 +5,12 @@ table fact_iap_transactions
 		dataType: dateTime
 		formatString: yyyy-mm-dd
 		lineageTag: 3bfc8dd3-8b2c-4067-aba0-de38a66bbc7d
+		summarizeBy: none
 		sourceColumn: purchase_date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
 
 	column user_id
 		dataType: string

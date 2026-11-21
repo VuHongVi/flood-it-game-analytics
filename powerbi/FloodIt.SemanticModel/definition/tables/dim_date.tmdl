@@ -7,7 +7,12 @@ table dim_date
 		isUnique
 		formatString: yyyy-mm-dd
 		lineageTag: 5006672f-53a6-453e-ba23-59a94e81e035
+		summarizeBy: none
 		sourceColumn: date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
 
 	column year
 		dataType: int64

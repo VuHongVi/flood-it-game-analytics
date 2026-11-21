@@ -5,7 +5,12 @@ table fact_daily_activity
 		dataType: dateTime
 		formatString: yyyy-mm-dd
 		lineageTag: 002c7484-1aa1-47a8-b769-22bef31a6028
+		summarizeBy: none
 		sourceColumn: date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
 
 	column dau
 		dataType: int64
