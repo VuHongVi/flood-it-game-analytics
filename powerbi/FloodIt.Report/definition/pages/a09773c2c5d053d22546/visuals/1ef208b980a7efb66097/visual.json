@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "1ef208b980a7efb66097",
   "position": {
     "x": 656,
@@ -27,7 +27,8 @@
                 }
               },
               "queryRef": "fact_level_funnel.level",
-              "nativeQueryRef": "level"
+              "nativeQueryRef": "level",
+              "active": true
             }
           ]
         },
@@ -65,8 +66,7 @@
             },
             "direction": "Ascending"
           }
-        ],
-        "isDefaultSort": false
+        ]
       }
     },
     "objects": {

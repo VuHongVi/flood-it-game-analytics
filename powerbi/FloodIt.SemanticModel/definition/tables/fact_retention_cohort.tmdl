@@ -5,32 +5,52 @@ table fact_retention_cohort
 		dataType: dateTime
 		formatString: yyyy-mm-dd
 		lineageTag: e97de87a-e9da-4c94-9e2f-dd0f6f02c6cf
+		summarizeBy: none
 		sourceColumn: cohort_week
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
 
 	column day_n
 		dataType: int64
 		lineageTag: cfb31b44-3f30-4a6c-9d17-6766d82d352a
+		summarizeBy: sum
 		sourceColumn: day_n
+
+		annotation SummarizationSetBy = Automatic
 
 	column cohort_users
 		dataType: int64
 		lineageTag: 105c90c1-6e58-4663-b58b-4c4b90ca2ddd
+		summarizeBy: sum
 		sourceColumn: cohort_users
+
+		annotation SummarizationSetBy = Automatic
 
 	column eligible_users
 		dataType: int64
 		lineageTag: 8576590a-fc23-4d82-bde4-586b128fa4ac
+		summarizeBy: sum
 		sourceColumn: eligible_users
+
+		annotation SummarizationSetBy = Automatic
 
 	column retained_users
 		dataType: int64
 		lineageTag: cf38d961-0196-47a1-aaf9-4def8646394c
+		summarizeBy: sum
 		sourceColumn: retained_users
+
+		annotation SummarizationSetBy = Automatic
 
 	column retention
 		dataType: double
 		lineageTag: 903fadb6-9094-4abb-970f-45734ec008ea
+		summarizeBy: sum
 		sourceColumn: retention
+
+		annotation SummarizationSetBy = Automatic
 
 	partition fact_retention_cohort = m
 		mode: import

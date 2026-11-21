@@ -1,2 +1,7 @@
 * text=auto eol=lf
 *.png binary
+# Power BI Desktop writes PBIP files with CRLF; keep them CRLF in the working tree so a
+# Desktop save does not show every file as modified (stored as LF in the repo).
+powerbi/FloodIt.Report/** text eol=crlf
+powerbi/FloodIt.SemanticModel/** text eol=crlf
+powerbi/FloodIt.pbip text eol=crlf

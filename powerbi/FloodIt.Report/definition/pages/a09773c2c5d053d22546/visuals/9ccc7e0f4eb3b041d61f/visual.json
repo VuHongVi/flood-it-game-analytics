@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "9ccc7e0f4eb3b041d61f",
   "position": {
     "x": 32,
@@ -27,25 +27,8 @@
                 }
               },
               "queryRef": "fact_day0_segments.segment",
-              "nativeQueryRef": "segment"
-            }
-          ]
-        },
-        "Y": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Measures"
-                    }
-                  },
-                  "Property": "Segment D7 Retention"
-                }
-              },
-              "queryRef": "_Measures.Segment D7 Retention",
-              "nativeQueryRef": "Segment D7 Retention"
+              "nativeQueryRef": "segment",
+              "active": true
             }
           ]
         },
@@ -85,6 +68,24 @@
               "nativeQueryRef": "Segment Players"
             }
           ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Segment D7 Retention"
+                }
+              },
+              "queryRef": "_Measures.Segment D7 Retention",
+              "nativeQueryRef": "Segment D7 Retention"
+            }
+          ]
         }
       },
       "sortDefinition": {
@@ -107,8 +108,7 @@
             },
             "direction": "Ascending"
           }
-        ],
-        "isDefaultSort": false
+        ]
       }
     },
     "objects": {
