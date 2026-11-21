@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
   "name": "d222476bb988303890ec",
   "position": {
     "x": 1128,
@@ -27,26 +27,7 @@
                 }
               },
               "queryRef": "fact_ltv_curve.day_n",
-              "nativeQueryRef": "day_n",
-              "active": true
-            }
-          ]
-        },
-        "Tooltips": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Measures"
-                    }
-                  },
-                  "Property": "LTV Payers"
-                }
-              },
-              "queryRef": "_Measures.LTV Payers",
-              "nativeQueryRef": "LTV Payers"
+              "nativeQueryRef": "day_n"
             }
           ]
         },
@@ -65,6 +46,24 @@
               },
               "queryRef": "_Measures.LTV",
               "nativeQueryRef": "LTV"
+            }
+          ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "LTV Payers"
+                }
+              },
+              "queryRef": "_Measures.LTV Payers",
+              "nativeQueryRef": "LTV Payers"
             }
           ]
         }
@@ -520,51 +519,5 @@
         }
       ]
     }
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "b8ffd04078b635b50db3",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_ltv_curve"
-              }
-            },
-            "Property": "day_n"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "2fcdbbd51dc09e8ccb04",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "_Measures"
-              }
-            },
-            "Property": "LTV"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "ab0f64735036a826d216",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "_Measures"
-              }
-            },
-            "Property": "LTV Payers"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

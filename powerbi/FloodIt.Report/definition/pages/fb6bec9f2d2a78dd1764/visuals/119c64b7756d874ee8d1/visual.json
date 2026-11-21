@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
   "name": "119c64b7756d874ee8d1",
   "position": {
     "x": 32,
@@ -27,31 +27,7 @@
                 }
               },
               "queryRef": "fact_day0_segments.segment",
-              "nativeQueryRef": "segment",
-              "active": true
-            }
-          ]
-        },
-        "Tooltips": {
-          "projections": [
-            {
-              "field": {
-                "Aggregation": {
-                  "Expression": {
-                    "Column": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "fact_day0_segments"
-                        }
-                      },
-                      "Property": "segment_order"
-                    }
-                  },
-                  "Function": 3
-                }
-              },
-              "queryRef": "Min(fact_day0_segments.segment_order)",
-              "nativeQueryRef": "Min of segment_order"
+              "nativeQueryRef": "segment"
             }
           ]
         },
@@ -86,6 +62,29 @@
               "nativeQueryRef": "Segment D7 Retention"
             }
           ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "fact_day0_segments"
+                        }
+                      },
+                      "Property": "segment_order"
+                    }
+                  },
+                  "Function": 3
+                }
+              },
+              "queryRef": "Min(fact_day0_segments.segment_order)",
+              "nativeQueryRef": "Min of segment_order"
+            }
+          ]
         }
       },
       "sortDefinition": {
@@ -108,7 +107,8 @@
             },
             "direction": "Ascending"
           }
-        ]
+        ],
+        "isDefaultSort": false
       }
     },
     "objects": {

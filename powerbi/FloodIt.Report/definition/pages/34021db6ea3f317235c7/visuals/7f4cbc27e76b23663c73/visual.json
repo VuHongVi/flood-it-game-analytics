@@ -25,14 +25,14 @@
             "rowCount": {
               "expr": {
                 "Literal": {
-                  "Value": "3L"
+                  "Value": "2L"
                 }
               }
             },
             "columnCount": {
               "expr": {
                 "Literal": {
-                  "Value": "3L"
+                  "Value": "5L"
                 }
               }
             },

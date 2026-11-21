@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
   "name": "f8cd7f49446eab891ebe",
   "position": {
     "x": 32,
@@ -13,25 +13,6 @@
     "visualType": "pivotTable",
     "query": {
       "queryState": {
-        "Columns": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "fact_retention_cohort"
-                    }
-                  },
-                  "Property": "day_n"
-                }
-              },
-              "queryRef": "fact_retention_cohort.day_n",
-              "nativeQueryRef": "day_n",
-              "active": true
-            }
-          ]
-        },
         "Rows": {
           "projections": [
             {
@@ -46,8 +27,25 @@
                 }
               },
               "queryRef": "fact_retention_cohort.cohort_week",
-              "nativeQueryRef": "cohort_week",
-              "active": true
+              "nativeQueryRef": "cohort_week"
+            }
+          ]
+        },
+        "Columns": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_retention_cohort"
+                    }
+                  },
+                  "Property": "day_n"
+                }
+              },
+              "queryRef": "fact_retention_cohort.day_n",
+              "nativeQueryRef": "day_n"
             }
           ]
         },

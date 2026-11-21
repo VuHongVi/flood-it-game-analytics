@@ -324,6 +324,63 @@ table _Measures
 		displayFolder: Churn model
 		lineageTag: 11e58d65-fadb-41cb-9e9b-3c81c3bb769c
 
+	/// Extra D7 players per 1,000 installs if under-1-minute installs retained like the 1-5 min band.
+	measure 'Impact First Minute Extra D7' = CALCULATE ( MAX ( kpi_metrics[value] ), kpi_metrics[metric_key] = "impact.first_minute_extra_d7_per_1000_installs" )
+		formatString: +0.0
+		displayFolder: Impact
+		lineageTag: 7eb4c132-cf1e-4dba-8d7d-c908b5a6cecc
+
+	/// Relative D7 lift of that scenario.
+	measure 'Impact First Minute D7 Lift' = CALCULATE ( MAX ( kpi_metrics[value] ), kpi_metrics[metric_key] = "impact.first_minute_d7_relative_lift" )
+		formatString: +0%
+		displayFolder: Impact
+		lineageTag: 4c4f5546-8136-40a0-aec0-36b241907d22
+
+	/// Extra players per 1,000 reaching the wall level who keep playing at the median quit rate.
+	measure 'Impact Wall Continue per 1000' = CALCULATE ( MAX ( kpi_metrics[value] ), kpi_metrics[metric_key] = "impact.wall_continue_per_1000_reaching" )
+		formatString: #,0
+		displayFolder: Impact
+		lineageTag: e7ed18d3-057b-4a29-b955-12cb9c204572
+
+	/// Quit rate at the wall level vs the median of other levels (text).
+	measure 'Impact Wall Quit vs Median' = FORMAT ( CALCULATE ( MAX ( kpi_metrics[value] ), kpi_metrics[metric_key] = "impact.wall_quit_rate" ), "0.0%" ) & " vs " & FORMAT ( CALCULATE ( MAX ( kpi_metrics[value] ), kpi_metrics[metric_key] = "impact.wall_benchmark_quit_rate_median" ), "0.0%" )
+		displayFolder: Impact
+		lineageTag: 0659f9c3-05ae-427b-bc83-7e8e935ab19d
+
+	/// Churners found in the riskiest three deciles vs random targeting.
+	measure 'Impact Churn Top 30% Lift' = CALCULATE ( MAX ( kpi_metrics[value] ), kpi_metrics[metric_key] = "impact.churn_top3_deciles_lift" )
+		formatString: 0.0"x"
+		displayFolder: Impact
+		lineageTag: 60c121db-c98b-4327-aa58-717bef83f4d3
+
+	/// Share of all churners in the riskiest three deciles.
+	measure 'Impact Churn Top 30% Capture' = CALCULATE ( MAX ( kpi_metrics[value] ), kpi_metrics[metric_key] = "impact.churn_top3_deciles_capture" )
+		formatString: 0%
+		displayFolder: Impact
+		lineageTag: 137ffe4d-2020-4aba-9a09-d7768f037cba
+
+	/// Gains curve: share of churners found when contacting deciles from the riskiest down to this one.
+	measure 'Cumulative Churn Capture' = VAR d = MAX ( fact_churn_risk_deciles[risk_decile] ) RETURN DIVIDE ( CALCULATE ( SUM ( fact_churn_risk_deciles[churned] ), REMOVEFILTERS ( fact_churn_risk_deciles ), fact_churn_risk_deciles[risk_decile] >= d ), CALCULATE ( SUM ( fact_churn_risk_deciles[churned] ), REMOVEFILTERS ( fact_churn_risk_deciles ) ) )
+		formatString: 0%
+		displayFolder: Impact
+		lineageTag: 1b9fa459-d817-4d22-9307-5680c5ef12b9
+
+	/// Gains baseline: share of churners a random pick of the same size would find.
+	measure 'Random Targeting Capture' = VAR d = MAX ( fact_churn_risk_deciles[risk_decile] ) RETURN DIVIDE ( CALCULATE ( SUM ( fact_churn_risk_deciles[players] ), REMOVEFILTERS ( fact_churn_risk_deciles ) , fact_churn_risk_deciles[risk_decile] >= d ), CALCULATE ( SUM ( fact_churn_risk_deciles[players] ), REMOVEFILTERS ( fact_churn_risk_deciles ) ) )
+		formatString: 0%
+		displayFolder: Impact
+		lineageTag: 06ad86c7-f101-4100-88c8-93f8be4917ea
+
+	/// Bar colour: orange = band to fix, blue = target band of the sizing scenario.
+	measure 'Engagement Band Color' = SWITCH ( MIN ( fact_day0_segments[segment_order] ), 1, "#EB6834", 2, "#2A78D6", "#B8B6B0" )
+		displayFolder: Impact
+		lineageTag: f40f6088-98ef-46e7-a393-1cc2ed0f5ec0
+
+	/// Bar colour: orange = the wall level used in the sizing.
+	measure 'Wall Level Color' = IF ( MAX ( fact_level_funnel[level] ) = CALCULATE ( MAX ( kpi_metrics[value] ), kpi_metrics[metric_key] = "impact.wall_level" ), "#EB6834", "#9DB9DD" )
+		displayFolder: Impact
+		lineageTag: 77609eef-df42-4dba-9331-a80cca128278
+
 	column _
 		isHidden
 		isNameInferred
