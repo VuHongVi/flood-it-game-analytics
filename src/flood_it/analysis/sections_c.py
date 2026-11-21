@@ -392,6 +392,42 @@ def statistics_ab(feat: pd.DataFrame, growth: pd.DataFrame | None, retention_d1:
 
 
 # ----------------------------------------------------------------------------- orchestrator
+def impact(data_dir, d7_overall: float) -> dict:
+    """Opportunity sizing for the three recommendations (scenario arithmetic on observed rates)."""
+    seg = pd.read_csv(data_dir / "p6_day0_segments.csv")
+    eng = seg[seg["dimension"] == "Day-0 engagement time"].sort_values("segment_order")
+    share_lt1 = eng["players"].iloc[0] / eng["players"].sum()
+    d7_lt1, d7_next = eng["d7_retention"].iloc[0], eng["d7_retention"].iloc[1]
+    extra_d7 = M.uplift_per_1000(share_lt1, d7_lt1, d7_next)
+
+    lv = pd.read_csv(data_dir / "p5_level_funnel.csv")
+    lv = lv[lv["level"] < lv["level"].max()]                      # last level: stopping = finishing
+    wall = lv.loc[lv["quit_rate_at_level"].idxmax()]
+    bench = float(lv.loc[lv["level"] != wall["level"], "quit_rate_at_level"].median())
+    q = M.quit_reduction(float(wall["quit_rate_at_level"]), bench, int(wall["new_players_started"]))
+
+    dec = pd.read_csv(data_dir / "p7_risk_deciles.csv")
+    top3 = M.top_k_capture(dec, 3)
+    return {
+        "note": "Scenario sizing on observed (non-randomised) rates: upper bounds to prioritise A/B tests, not causal effects.",
+        "first_minute_share_lt1min": float(share_lt1),
+        "first_minute_d7_lt1min": float(d7_lt1),
+        "first_minute_d7_next_band": float(d7_next),
+        "first_minute_extra_d7_per_1000_installs": float(extra_d7),
+        "first_minute_d7_overall": float(d7_overall),
+        "first_minute_d7_relative_lift": float(extra_d7 / 1000.0 / d7_overall),
+        "wall_level": int(wall["level"]),
+        "wall_quit_rate": float(wall["quit_rate_at_level"]),
+        "wall_benchmark_quit_rate_median": bench,
+        "wall_new_players_reaching": int(wall["new_players_started"]),
+        "wall_continue_per_1000_reaching": q["continue_per_1000_reaching"],
+        "wall_extra_players_in_cohort": q["extra_players_in_cohort"],
+        "churn_top3_deciles_capture": top3["capture"],
+        "churn_top3_deciles_reach": top3["reach"],
+        "churn_top3_deciles_lift": top3["lift"],
+    }
+
+
 def run_all(ctx: dict, cohort: pd.DataFrame, start: pd.Timestamp, end: pd.Timestamp) -> dict:
     raw, a = ctx["raw"], ctx["cfg"].analysis
     feat = day0_features(cohort, raw["11_user_day"])
@@ -401,9 +437,11 @@ def run_all(ctx: dict, cohort: pd.DataFrame, start: pd.Timestamp, end: pd.Timest
     d1 = ctx.get("metrics_b_retention_d1")
     if d1 is None:
         d1 = M.retention_table(cohort, raw["11_user_day"], [1], end, by=None)["retention"].iloc[0]
-    return {
+    out = {
         "levels": levels(raw, cohort),
         "segments": segments(raw, feat),
         "churn": churn_model(feat, a["random_seed"]),
         "stats": statistics_ab(feat, growth, float(d1)),
     }
+    out["impact"] = impact(ctx["cfg"].path("data_dir"), float(ctx["metrics_b_retention_d7"]))
+    return out

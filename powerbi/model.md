@@ -390,7 +390,7 @@ All other tables are standalone (each visual uses one table), so no ambiguous pa
 
 ### kpi_metrics
 
-- Grain: **one row per scalar in results/metrics.json** (260 rows)
+- Grain: **one row per scalar in results/metrics.json** (276 rows)
 - Raw CSV: https://raw.githubusercontent.com/VuHongVi/flood-it-game-analytics/main/powerbi/data/kpi_metrics.csv
 
 | Column | Type | Description |

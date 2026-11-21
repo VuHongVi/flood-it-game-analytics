@@ -113,6 +113,37 @@ def limitations(m: dict) -> list[str]:
     ]
 
 
+def sizing_rows(m: dict) -> list[str]:
+    i, st = m["impact"], m["stats"]
+    d7_new = i["first_minute_d7_overall"] * (1 + i["first_minute_d7_relative_lift"])
+    return [
+        f"| **Fix the first minute** | {pct(i['first_minute_share_lt1min'], 0)} of installs play under 1 min on day 0; "
+        f"their D7 is {pct(i['first_minute_d7_lt1min'])} vs {pct(i['first_minute_d7_next_band'])} for 1-5 min | "
+        f"+{i['first_minute_extra_d7_per_1000_installs']:.1f} D7 players per 1,000 installs "
+        f"(D7 {pct(i['first_minute_d7_overall'])} -> {pct(d7_new)}, +{pct(i['first_minute_d7_relative_lift'], 0)} relative) "
+        "if they behaved like the 1-5 min band | "
+        "A/B a tutorial board; primary metric = share of installs reaching 1+ min on day 0 |",
+        f"| **Rebalance level {i['wall_level']}** | {pct(i['wall_quit_rate'])} of new players who reach it stop there "
+        f"vs a median of {pct(i['wall_benchmark_quit_rate_median'])} on other levels | "
+        f"{i['wall_continue_per_1000_reaching']:.0f} more of every 1,000 players who reach it keep playing "
+        f"({i['wall_extra_players_in_cohort']:.0f} players in this sample) at the median quit rate | "
+        "A/B the difficulty; guardrails D7 and rewarded-ad views |",
+        f"| **Target at-risk installs** | churn model on install-day behaviour, test AUC {m['churn']['lr_test_auc']:.2f} | "
+        f"contacting the riskiest {pct(i['churn_top3_deciles_reach'], 0)} finds {pct(i['churn_top3_deciles_capture'], 0)} "
+        f"of churners ({i['churn_top3_deciles_lift']:.1f}x random): good enough to rank, too weak to personalise | "
+        "re-engagement push with a holdout group |",
+        f"| **Plan the D1 test** | baseline D1 {pct(st['ab_baseline_d1'])} | +2 pp needs {num(st['ab_n_per_arm'])} players per arm, "
+        f"~{num(st['ab_days_needed_at_sample_volume'])} days at the sampled {st['ab_sample_installs_per_day']} installs/day | "
+        "run on full traffic or test bigger changes |",
+    ]
+
+
+def sizing_table(m: dict) -> str:
+    head = ["| Recommendation | Evidence | Size of the prize (scenario on observed rates, not causal) | How to validate |",
+            "|---|---|---|---|"]
+    return "\n".join(head + sizing_rows(m))
+
+
 def render_readme(m: dict, links: dict) -> str:
     p, g, r, v, lv, s, c, st, val = (m[k] for k in ["profile", "growth", "retention", "revenue", "levels",
                                                     "segments", "churn", "stats", "validation"])
@@ -132,6 +163,27 @@ statistical testing and A/B-test design. Every number in this README is generate
 {dash_line}
 **Short report:** [reports/report.md](reports/report.md) - **Validation:** [results/validation_report.md](results/validation_report.md) ({val['passed']}/{val['checks']} checks PASS)
 **Power BI report:** [powerbi/FloodIt.pbip](powerbi/FloodIt.pbip) (open in Power BI Desktop, then Refresh) - **PDF:** [reports/FloodIt_PowerBI_report.pdf](reports/FloodIt_PowerBI_report.pdf)
+
+## In 30 seconds
+
+![Power BI report - overview page](figures/powerbi_01_overview.png)
+
+- **Business question:** why do new Flood-It players leave, does the game make money, and what should the team test first?
+- **Data and stack:** {num(p['total_events'])} Firebase / GA4 events from {num(p['total_users'])} players on BigQuery
+  (nested `UNNEST` SQL behind a dry-run cost guard), Python (pandas, statsmodels, scikit-learn), Power BI (DAX, TMDL/PBIR),
+  GitHub Actions re-running the whole pipeline on every push.
+- **Answer:** only {pct(r['d1_retention'])} of new players return the next day and {pct(r['d30_retention'])} after a month;
+  the first session and one difficulty wall (level {m['impact']['wall_level']}) are the two clearest leaks, and IAP is negligible
+  (payer rate {pct(v['payer_rate'], 2)}), so retention is the lever.
+- **Trust:** every headline number is computed twice (SQL and pandas, {val['passed']}/{val['checks']} checks pass), the Power BI
+  model is reconciled to the pipeline, and the mistakes made along the way are logged in
+  [docs/ai_corrections.md](docs/ai_corrections.md).
+
+### What to do, and what it is worth
+
+{sizing_table(m)}
+
+Sizes are what the observed gap is worth if it closed: they rank the tests; the A/B tests measure the real effect.
 
 ## Power BI report
 
@@ -272,6 +324,12 @@ better first minute, each validated by an A/B test.
 
 {rec}
 
+## What each recommendation is worth
+
+{sizing_table(m)}
+
+Sizes are scenario arithmetic on observed (non-randomised) rates: they rank the tests; A/B tests measure the real effect.
+
 ## Caveats
 
 {lim}
@@ -294,9 +352,14 @@ def render_cv(m: dict, links: dict) -> str:
   {pct(s['d7_retention_eng_lt1min'])} on D7 vs {pct(s['d7_retention_eng_15plus'])} for 15+ minutes; built a churn model on
   install-day behaviour (logistic regression, test AUC {c['lr_test_auc']:.2f}) and an A/B test plan with power analysis
   ({num(st['ab_n_per_arm'])} players per arm for +2 pp D1).
+- Sized each recommendation: closing the first-minute gap is worth +{m['impact']['first_minute_extra_d7_per_1000_installs']:.1f}
+  D7 players per 1,000 installs (+{pct(m['impact']['first_minute_d7_relative_lift'], 0)} relative D7) and bringing level
+  {m['impact']['wall_level']} to a median quit rate keeps {m['impact']['wall_continue_per_1000_reaching']:.0f} more of every
+  1,000 players who reach it; showed the churn model is a ranking tool ({m['impact']['churn_top3_deciles_lift']:.1f}x random
+  in the riskiest 30%), not a personalisation tool.
 - Diagnosed data-quality traps with SQL (sampled export, DAU spikes caused by missing screen_view events, mixed-type
-  params, missing first_open) and delivered an interactive dashboard plus a Power BI model with DAX measures reconciled
-  to the pipeline.
+  params, missing first_open) and delivered a 9-page Power BI report (DAX, TMDL/PBIR generated from code) reconciled
+  to the pipeline row by row.
 """
 
 

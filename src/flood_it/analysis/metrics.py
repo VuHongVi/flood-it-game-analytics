@@ -191,3 +191,30 @@ def ltv_curve(cohort: pd.DataFrame, iap: pd.DataFrame, max_day: int, end_date: p
             "payer_rate": r["user_id"].nunique() / e if e else np.nan,
         })
     return pd.DataFrame(rows)
+
+
+# ----------------------------------------------------------------------------- opportunity sizing
+# Scenario arithmetic used to size the recommendations. Inputs are observed rates, so the results
+# are "if the gap closed" upper bounds, not causal effects; an A/B test is still needed to confirm.
+
+def uplift_per_1000(share: float, rate_now: float, rate_target: float) -> float:
+    """Extra successes per 1,000 of the whole population if a segment holding `share` of it
+    moved from `rate_now` to `rate_target`."""
+    return 1000.0 * share * (rate_target - rate_now)
+
+
+def quit_reduction(quit_now: float, quit_benchmark: float, players_reaching: int) -> dict:
+    """Players who would continue past a level if its quit rate fell to a benchmark."""
+    gap = max(quit_now - quit_benchmark, 0.0)
+    return {"continue_per_1000_reaching": 1000.0 * gap, "extra_players_in_cohort": gap * players_reaching}
+
+
+def top_k_capture(deciles: pd.DataFrame, k: int, decile_col: str = "risk_decile",
+                  churn_col: str = "churned", n_col: str = "players") -> dict:
+    """Share of all churners found by contacting the k riskiest deciles (highest decile number),
+    and the lift over contacting the same number of players at random."""
+    d = deciles.sort_values(decile_col, ascending=False)
+    top = d.head(k)
+    capture = top[churn_col].sum() / d[churn_col].sum()
+    reach = top[n_col].sum() / d[n_col].sum()
+    return {"capture": float(capture), "reach": float(reach), "lift": float(capture / reach)}
